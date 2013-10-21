@@ -1,0 +1,62 @@
+Здравствуйте господа!
+
+Отвечаю сразу на 2 адреса, т.к. мне показалось что и Вас (людей) более одного.
+
+
+1) - это не вопрос, а комментарий или прелюдия к повествованию если угодно
+
+2) 
+> Инструкция -lc - означает линковку с библиотекой libc
+Ну это и так понятно)
+
+3)
+> Касательно точек входа main/_start причина та же самая, что и раньше.
+> main требуется glibc, т. е. glibc внутри себя "содержит" функцию _start
+> (это не правда, но вы можете считать так), которая вызовет ваш main,
+> если же вы не линкуетесь с libc, то точку входа _start вы должны
+> предоставить самостоятельно.
+Меня интересует то место где "(это не правда, но вы можете считать так)" - мне бы хотелось считать правильно, так что расскажите лучше как оно на самом деле. Или скажите где прочитать, а то большее число источников в инете по ассемблеру дальше hello world не идут.
+
+4)
+Судя по Вашему ответу Вы не только makefile не запускали, но и readme.txt не дочитали))
+
+Вы могли заметить что я написал вывод ldd вместе со строкой запуска:
+
+$ ~/csc/comp_arc/ht_01/task $ ldd bin/hello_puts_as_ld_link_bad
+
+	linux-gate.so.1 =>  (0xb7732000)
+	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 (0xb756d000)
+	/usr/lib/libc.so.1 => /lib/ld-linux.so.2 (0xb7733000)
+
+$ ~/csc/comp_arc/ht_01/task $ ldd bin/hello_puts_as_ld_link_good
+
+	linux-gate.so.1 =>  (0xb7796000)
+	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 (0xb75d1000)
+	/lib/ld-linux.so.2 (0xb7797000)
+
+Кроме того - имя файла я ввожу с автозаполнением, так что опечатка исключается, кроме того - ну что делает разумный человек получив такое? Набирает ls bin -l, потом cat bin/hello_puts_as_ld_link_bad и убеждается что файл есть и читается.)) Опечатка как раз в readme))
+
+Команда file выдает вот что:
+
+duckens@duckens-gelezyaka ~/csc/comp_arc/ht_01/borozdin.andrey-01 $ file bin/hello_puts_as_ld_link_bad
+bin/hello_puts_as_ld_link_bad: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), not stripped
+duckens@duckens-gelezyaka ~/csc/comp_arc/ht_01/borozdin.andrey-01 $ file bin/hello_puts_as_ld_link_good
+bin/hello_puts_as_ld_link_good: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), not stripped
+duckens@duckens-gelezyaka ~/csc/comp_arc/ht_01/borozdin.andrey-01 $ bin/hello_puts_as_ld_link_bad 
+bash: bin/hello_puts_as_ld_link_bad: No such file or directory
+duckens@duckens-gelezyaka ~/csc/comp_arc/ht_01/borozdin.andrey-01 $ bin/hello_puts_as_ld_link_good 
+Hello, world!
+duckens@duckens-gelezyaka ~/csc/comp_arc/ht_01/borozdin.andrey-01 $ 
+
+Но все-таки я бы попросил Вас запустить makefile.
+
+
+
+5) А еще Вы проигнорировали мою просьбу выдать задание примерно на эту тему, но посложнее)
+
+
+Спасибо!
+
+С уважением,
+Андрей Бороздин
+

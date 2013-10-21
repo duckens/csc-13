@@ -1,0 +1,314 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD obj/hello_puts_as_ld.o
+LOAD /usr/lib/i386-linux-gnu/libc.so
+START GROUP
+LOAD /lib/i386-linux-gnu/libc.so.6
+LOAD /usr/lib/i386-linux-gnu/libc_nonshared.a
+LOAD /lib/i386-linux-gnu/ld-linux.so.2
+END GROUP
+                0x0000000008048000                PROVIDE (__executable_start, 0x8048000)
+                0x00000000080480d4                . = (0x8048000 + SIZEOF_HEADERS)
+
+.interp         0x00000000080480d4       0x13
+ *(.interp)
+ .interp        0x00000000080480d4       0x13 obj/hello_puts_as_ld.o
+
+.note.gnu.build-id
+ *(.note.gnu.build-id)
+
+.hash           0x00000000080480e8       0x14
+ *(.hash)
+ .hash          0x00000000080480e8       0x14 obj/hello_puts_as_ld.o
+
+.gnu.hash
+ *(.gnu.hash)
+
+.dynsym         0x00000000080480fc       0x20
+ *(.dynsym)
+ .dynsym        0x00000000080480fc       0x20 obj/hello_puts_as_ld.o
+
+.dynstr         0x000000000804811c       0x1a
+ *(.dynstr)
+ .dynstr        0x000000000804811c       0x1a obj/hello_puts_as_ld.o
+
+.gnu.version    0x0000000008048136        0x4
+ *(.gnu.version)
+ .gnu.version   0x0000000008048136        0x4 obj/hello_puts_as_ld.o
+
+.gnu.version_d  0x000000000804813c        0x0
+ *(.gnu.version_d)
+ .gnu.version_d
+                0x0000000000000000        0x0 obj/hello_puts_as_ld.o
+
+.gnu.version_r  0x000000000804813c       0x20
+ *(.gnu.version_r)
+ .gnu.version_r
+                0x000000000804813c       0x20 obj/hello_puts_as_ld.o
+
+.rel.dyn        0x000000000804815c        0x0
+ *(.rel.init)
+ *(.rel.text .rel.text.* .rel.gnu.linkonce.t.*)
+ .rel.text      0x0000000000000000        0x0 obj/hello_puts_as_ld.o
+ *(.rel.fini)
+ *(.rel.rodata .rel.rodata.* .rel.gnu.linkonce.r.*)
+ *(.rel.data.rel.ro .rel.data.rel.ro.* .rel.gnu.linkonce.d.rel.ro.*)
+ *(.rel.data .rel.data.* .rel.gnu.linkonce.d.*)
+ *(.rel.tdata .rel.tdata.* .rel.gnu.linkonce.td.*)
+ *(.rel.tbss .rel.tbss.* .rel.gnu.linkonce.tb.*)
+ *(.rel.ctors)
+ *(.rel.dtors)
+ *(.rel.got)
+ .rel.got       0x0000000000000000        0x0 obj/hello_puts_as_ld.o
+ *(.rel.bss .rel.bss.* .rel.gnu.linkonce.b.*)
+ .rel.bss       0x0000000000000000        0x0 obj/hello_puts_as_ld.o
+ *(.rel.ifunc)
+
+.rel.plt        0x000000000804815c        0x8
+ *(.rel.plt)
+ .rel.plt       0x000000000804815c        0x8 obj/hello_puts_as_ld.o
+                0x0000000008048164                PROVIDE (__rel_iplt_start, .)
+ *(.rel.iplt)
+ .rel.iplt      0x0000000000000000        0x0 obj/hello_puts_as_ld.o
+                0x0000000008048164                PROVIDE (__rel_iplt_end, .)
+
+.init
+ *(SORT(.init))
+
+.plt            0x0000000008048170       0x20
+ *(.plt)
+ .plt           0x0000000008048170       0x20 obj/hello_puts_as_ld.o
+                0x0000000008048180                puts@@GLIBC_2.0
+ *(.iplt)
+ .iplt          0x0000000000000000        0x0 obj/hello_puts_as_ld.o
+
+.text           0x0000000008048190       0x1c
+ *(.text.unlikely .text.*_unlikely)
+ *(.text.exit .text.exit.*)
+ *(.text.startup .text.startup.*)
+ *(.text.hot .text.hot.*)
+ *(.text .stub .text.* .gnu.linkonce.t.*)
+ .text          0x0000000008048190       0x1c obj/hello_puts_as_ld.o
+                0x0000000008048190                _start
+ *(.gnu.warning)
+
+.fini
+ *(SORT(.fini))
+                0x00000000080481ac                PROVIDE (__etext, .)
+                0x00000000080481ac                PROVIDE (_etext, .)
+                0x00000000080481ac                PROVIDE (etext, .)
+
+.rodata
+ *(.rodata .rodata.* .gnu.linkonce.r.*)
+
+.rodata1
+ *(.rodata1)
+
+.eh_frame_hdr
+ *(.eh_frame_hdr)
+
+.eh_frame       0x00000000080481ac        0x0
+ *(.eh_frame)
+ .eh_frame      0x0000000000000000        0x0 obj/hello_puts_as_ld.o
+
+.gcc_except_table
+ *(.gcc_except_table .gcc_except_table.*)
+
+.exception_ranges
+ *(.exception_ranges .exception_ranges*)
+                0x00000000080481ac                . = (ALIGN (0x1000) - ((0x1000 - .) & 0xfff))
+                0x00000000080491ac                . = DATA_SEGMENT_ALIGN (0x1000, 0x1000)
+
+.eh_frame
+ *(.eh_frame)
+
+.gcc_except_table
+ *(.gcc_except_table .gcc_except_table.*)
+
+.exception_ranges
+ *(.exception_ranges .exception_ranges*)
+
+.tdata
+ *(.tdata .tdata.* .gnu.linkonce.td.*)
+
+.tbss
+ *(.tbss .tbss.* .gnu.linkonce.tb.*)
+ *(.tcommon)
+
+.preinit_array  0x00000000080491ac        0x0
+                0x00000000080491ac                PROVIDE (__preinit_array_start, .)
+ *(.preinit_array)
+                0x00000000080491ac                PROVIDE (__preinit_array_end, .)
+
+.init_array     0x00000000080491ac        0x0
+                0x00000000080491ac                PROVIDE (__init_array_start, .)
+ *(SORT(.init_array.*) SORT(.ctors.*))
+ *(.init_array)
+ *(EXCLUDE_FILE(*crtend?.o *crtend.o *crtbegin?.o *crtbegin.o) .ctors)
+                0x00000000080491ac                PROVIDE (__init_array_end, .)
+
+.fini_array     0x00000000080491ac        0x0
+                0x00000000080491ac                PROVIDE (__fini_array_start, .)
+ *(SORT(.fini_array.*) SORT(.dtors.*))
+ *(.fini_array)
+ *(EXCLUDE_FILE(*crtend?.o *crtend.o *crtbegin?.o *crtbegin.o) .dtors)
+                0x00000000080491ac                PROVIDE (__fini_array_end, .)
+
+.ctors
+ *crtbegin.o(.ctors)
+ *crtbegin?.o(.ctors)
+ *(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors)
+ *(SORT(.ctors.*))
+ *(.ctors)
+
+.dtors
+ *crtbegin.o(.dtors)
+ *crtbegin?.o(.dtors)
+ *(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
+ *(SORT(.dtors.*))
+ *(.dtors)
+
+.jcr
+ *(.jcr)
+
+.data.rel.ro
+ *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*)
+ *(.data.rel.ro .data.rel.ro.* .gnu.linkonce.d.rel.ro.*)
+
+.dynamic        0x00000000080491ac       0xa0
+ *(.dynamic)
+ .dynamic       0x00000000080491ac       0xa0 obj/hello_puts_as_ld.o
+                0x00000000080491ac                _DYNAMIC
+
+.got            0x000000000804924c        0x0
+ *(.got)
+ .got           0x0000000000000000        0x0 obj/hello_puts_as_ld.o
+ *(.igot)
+                0x000000000804924c                . = DATA_SEGMENT_RELRO_END (., (SIZEOF (.got.plt) >= 0xc)?0xc:0x0)
+
+.got.plt        0x000000000804924c       0x10
+ *(.got.plt)
+ .got.plt       0x000000000804924c       0x10 obj/hello_puts_as_ld.o
+                0x000000000804924c                _GLOBAL_OFFSET_TABLE_
+ *(.igot.plt)
+ .igot.plt      0x0000000000000000        0x0 obj/hello_puts_as_ld.o
+
+.data           0x000000000804925c        0xd
+ *(.data .data.* .gnu.linkonce.d.*)
+ .data          0x000000000804925c        0xd obj/hello_puts_as_ld.o
+
+.data1
+ *(.data1)
+                0x0000000008049269                _edata = .
+                0x0000000008049269                PROVIDE (edata, .)
+                0x0000000008049269                . = .
+                0x0000000008049269                __bss_start = .
+
+.bss            0x000000000804926c        0x0
+ *(.dynbss)
+ .dynbss        0x0000000000000000        0x0 obj/hello_puts_as_ld.o
+ *(.bss .bss.* .gnu.linkonce.b.*)
+ .bss           0x000000000804926c        0x0 obj/hello_puts_as_ld.o
+ *(COMMON)
+                0x000000000804926c                . = ALIGN ((. != 0x0)?0x4:0x1)
+                0x000000000804926c                . = ALIGN (0x4)
+                0x000000000804926c                . = ALIGN (0x4)
+                0x000000000804926c                _end = .
+                0x000000000804926c                PROVIDE (end, .)
+                0x000000000804926c                . = DATA_SEGMENT_END (.)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment
+ *(.comment)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges
+ *(.debug_aranges)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info
+ *(.debug_info .gnu.linkonce.wi.*)
+
+.debug_abbrev
+ *(.debug_abbrev)
+
+.debug_line
+ *(.debug_line)
+
+.debug_frame
+ *(.debug_frame)
+
+.debug_str
+ *(.debug_str)
+
+.debug_loc
+ *(.debug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.debug_pubtypes
+ *(.debug_pubtypes)
+
+.debug_ranges
+ *(.debug_ranges)
+
+.debug_macro
+ *(.debug_macro)
+
+.gnu.attributes
+ *(.gnu.attributes)
+
+/DISCARD/
+ *(.note.GNU-stack)
+ *(.gnu_debuglink)
+ *(.gnu.lto_*)
+OUTPUT(bin/hello_puts_as_ld_link_good elf32-i386)

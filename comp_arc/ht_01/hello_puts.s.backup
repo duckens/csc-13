@@ -1,0 +1,23 @@
+
+.global main
+
+.text
+
+main:
+	push	%ebp
+	movl	%esp, %ebp
+	push	$msg
+#	mov		$msg, %esp
+	call	puts
+	movl	%ebp, %esp
+	pop		%ebp
+
+	movl	$3, %ebx
+	movl	$1, %eax
+	int		$0x80
+
+.data
+
+msg:
+	.ascii    "Hello, world!"
+	len = . - msg
