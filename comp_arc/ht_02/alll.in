@@ -1,0 +1,22 @@
+	void* address_IE = my_alloc(300);
+		std::cout << distFromBeg(address_IE) << " " << address_IE << std::endl;
+		
+		void* address_Trojan = my_alloc(1);
+		std::cout << distFromBeg(address_Trojan) << " " << address_Trojan << std::endl;
+		
+		void* address_Trojan1 = my_alloc(1);
+		std::cout << distFromBeg(address_Trojan1) << " " << address_Trojan1 << std::endl;
+
+		my_delete(address_IE);
+
+		void* address_AVK = my_alloc(10);
+		std::cout << distFromBeg(address_AVK) << " " << address_AVK << std::endl;
+
+		memoryMap();
+		printTree();
+
+		my_delete(address_Trojan);
+
+		memoryMap();
+		printTree();
+	

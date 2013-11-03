@@ -1,0 +1,219 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<link rel="StyleSheet" href="Image%20Filtering%20in%20the%20Frequency%20Domain_files/pdbstyle.css" type="text/css" media="all">
+<title>Image Filtering in the Frequency Domain</title>
+</head>
+<body bgcolor="#ffffff">
+<!-- Google analytics -->
+<script src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/ga.js" async="" type="text/javascript"></script><script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-40175012-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+<script language="JavaScript">
+<!--
+   if (self.location.href != top.location.href) {
+      top.location.href = self.location.href;
+   }
+-->
+</script>
+
+
+
+<center>
+<h1>Image Filtering in the Frequency Domain</h1>
+Written by <a href="http://paulbourke.net/miscellaneous/">Paul Bourke</a><br>
+June 1998<p>
+See also: <a href="http://paulbourke.net/miscellaneous/dft/">2D Fourier Transform</a>, and
+	<a href="http://paulbourke.net/miscellaneous/dft/">Fast Fourier Transform</a><br>
+</p></center>
+
+<p></p><hr><p>
+
+</p><p align="justify">
+The following will discuss two dimensional image filtering in the
+frequency domain. The reason for doing the filtering in the frequency
+domain is generally because it is computationally faster to perform
+two 2D Fourier transforms and a filter multiply than to perform a 
+convolution in the image (spatial) domain. This is particularly so
+as the filter size increases.<br>
+In what follows it is assumed that the reader is familiar with the
+Discrete Fourier Transform, its properties, and the transforms of
+commonly used functions (delta, noise, rectangular pulse, step, etc).
+</p>
+
+<h3>Example 1 - General</h3>
+
+<p align="justify">
+The following example will apply "ideal" low, high, and band pass
+filters to a 2 dimensional rectangular pulse with low level added noise.
+For each step in the process two representations will be 
+given, the image and a surface rendering. Seeing both together can often
+give different clues as to what is going on.
+</p>
+
+The original signal is a rectangular pulse with added noise.<br>
+<center><table width="100%"><tbody><tr><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/original.gif" height="256" width="256" border="1"></center>
+</td><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/original2.gif" height="205" width="395"></center>
+</td></tr></tbody></table></center><p>
+
+The fourier transform of the rectangular pulse is the two dimensional
+equivalent of the sync function, the fourier transform of white noise
+is a constant.<br>
+</p><center><table width="100%"><tbody><tr><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/fft.gif" height="256" width="256" border="1"></center>
+</td><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/fft2.gif" height="185" width="399"></center>
+</td></tr></tbody></table></center><p>
+
+</p><p align="justify">
+Applying a low pass filter in the frequency domain means zeroing all
+frequency components above a cutoff frequency. This is similar to what one
+would do in a 1 dimensional case except now the ideal filter is a 
+cylindrical "can" instead of a rectangular pulse.
+</p>
+<center><table width="100%"><tbody><tr><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/lowpass.gif" height="256" width="256" border="1"></center>
+</td><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/lowpass2.gif" height="183" width="396"></center>
+</td></tr></tbody></table></center><p>
+
+The result transformed back into the spatial domain. As expected the
+high frequency components have been removed. The rectangular pulse
+is "rounded" since high frequency components were required for the
+transition.<br> 
+</p><center><table width="100%"><tbody><tr><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/lowpasst.gif" height="256" width="256" border="1"></center>
+</td><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/lowpass2t.gif" height="191" width="396"></center>
+</td></tr></tbody></table></center><p>
+
+Applying a high pass filter frequency domain is the opposite to
+the low pass filter, that is, all the frequencies below some cutoff
+radius are removed. Note the apparently higher noise levels are 
+false, the graphs are auto scaling and thus the field only appears
+larger because of the removal of the low frequency components.<br>
+</p><center><table width="100%"><tbody><tr><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/highpass.gif" height="256" width="256" border="1"></center>
+</td><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/highpass2.gif" height="181" width="396"></center>
+</td></tr></tbody></table></center><p>
+
+Transformed back into the spatial domain shows that the noise field
+is retained as well as the transitions (edges) of the rectangular pulse.<br>
+</p><center><table width="100%"><tbody><tr><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/highpasst.gif" height="256" width="256" border="1"></center>
+</td><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/highpass2t.gif" height="192" width="396"></center>
+</td></tr></tbody></table></center><p>
+
+Applying a band pass filter, frequency domain.<br>
+</p><center><table width="100%"><tbody><tr><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/bandpass.gif" height="256" width="256" border="1"></center>
+</td><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/bandpass2.gif" height="182" width="396"></center>
+</td></tr></tbody></table></center><p>
+
+Transformed back into the spatial domain<br>
+</p><center><table width="100%"><tbody><tr><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/bandpasst.gif" height="256" width="256" border="1"></center>
+</td><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/bandpass2t.gif" height="191" width="394"></center>
+</td></tr></tbody></table></center><p>
+
+</p><p align="justify">
+Sketch showing how the 4 quadrants returned from the 2D Fourier
+transform are rearranged so as to position the DC component in the
+middle of the image. A very clear understanding of the position of DC,
+the Nyquist frequency, and positive/negative frequencies is necessary
+to get this translation correct.
+</p>
+<p></p><center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/sketch1.gif" height="493" width="370"></center><p>
+
+</p><h3>Example 2 - Smooth low pass filters</h3>
+
+<p align="justify">
+As with time series filtering, using ideal rectangular filters can
+result in unwanted ringing. In two dimensions instead of using a 
+radial rectangular filter (a can) one can smooth the transition
+between the stop and pass band. This is often done using Hanning
+or Hamming windows which are rectangular windows smoothed by 
+cosine functions.
+<br>
+In the following example two low pass filters will be applied to
+the step function shown below. One filter will have a sharp transition
+as used in example 1, the other filter will have a more gradual
+transition between the stop and pass band.
+(Actually this is two steps, the other occurs where the right hand edge
+wraps to the left hand edge.)
+</p>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/step.gif" height="256" width="256" border="1"></center><p>
+
+</p><p align="justify">
+The "can" type low pass filter is shown below on the left along with
+the filtered step function on the right.
+</p>
+
+<center><table width="100%"><tbody><tr><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/stepfreq1.gif" height="256" width="256" border="1"></center>
+</td><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/stepinv1.gif" height="256" width="256" border="1"></center>
+</td></tr></tbody></table></center><p>
+
+</p><p align="justify">
+In this next image a smoothed version of the filter is used (left)
+and the filtered result is again shown no the right.
+The ringing in the region distant to the step is significantly
+reduced.
+</p>
+
+<center><table width="100%"><tbody><tr><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/stepfreq2.gif" height="256" width="256" border="1"></center>
+</td><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/stepinv2.gif" height="256" width="256" border="1"></center>
+</td></tr></tbody></table></center><p>
+
+</p><h3>Example 3 - Smooth high pass filter</h3>
+
+<p align="justify">
+In a less artificial example of using smooth filters, consider a 
+high pass filtering of the following photograph.
+</p>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/boy1.gif" height="512" width="512" border="1"></center><p>
+
+</p><p align="justify">
+The following uses the sharp high pass filter from example 1 shown
+on the left and the resulting filtered image is on the right.
+</p>
+<center><table width="100%"><tbody><tr><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/high1.gif" height="256" width="256" border="1"></center>
+</td><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/boy2.gif" height="512" width="512" border="1"></center>
+</td></tr></tbody></table></center><p>
+
+</p><p align="justify">
+The following uses a smooth version of the same high pass filter (left)
+and the filtered image is shown on the right. The ringing is greatly
+reduced, see the large regions of constant (low frequency) content such
+as the path or the door.
+</p>
+<center><table width="100%"><tbody><tr><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/high2.gif" height="256" width="256" border="1"></center>
+</td><td>
+<center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/boy3.gif" height="512" width="512" border="1"></center>
+</td></tr></tbody></table></center><p>
+
+</p><p></p><center><img src="Image%20Filtering%20in%20the%20Frequency%20Domain_files/sketch2.gif" height="427" width="700"></center><p>
+
+
+
+
+</p></body></html>

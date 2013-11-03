@@ -297,7 +297,7 @@ int main(int argc, char* argv[]){
 	// Однако надеюсь что доделаю ДПФ) - это просто интересно)
 
 
-	/*
+	
 	Mat image_gray;
 	cvtColor(image, image_gray, CV_BGR2GRAY);
 	Mat padded;
@@ -306,11 +306,14 @@ int main(int argc, char* argv[]){
 	copyMakeBorder(image_gray, padded, 0, m - image_gray.rows, 0, n - image_gray.cols, BORDER_CONSTANT, Scalar::all(0));
 
 	Mat planes[] = {Mat_<float>(padded), Mat::zeros(padded.size(), CV_32F)};
-	Mat complexI;
-	merge(planes, 2, complexI);         // Add to the expanded another plane with zeros
+	Mat image_gray_complex;
+	Mat image_gray_complex_afterDFT;
+	merge(planes, 2, image_gray_complex);         // Add to the expanded another plane with zeros
 
-	dft(complexI, complexI);
-	*/
+	dft(image_gray_complex, image_gray_complex_afterDFT);
+
+	Mat image_filter = Mat::zeros(image_gray_complex_afterDFT.size(), CV_32F);
+	
 
 	// std::vector<Mat> image_dft(10);
 	// dft(image_dft[0], image_dft[1]);
