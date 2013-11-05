@@ -1,0 +1,156 @@
+/*
+		int al = 15;
+		std::cout << "ALLOCATE " << al << std::endl;
+		void* address = my_alloc(al);
+		std::cout << distFromBeg(address) << " " << address << std::endl;
+		memoryMap();
+		printTree();
+		my_delete((void*)address);
+		memoryMap();
+		printTree();
+
+		for(int i = 0; i < 20; i++){
+			int al = 15;
+			std::cout << "ALLOCATE " << al << std::endl;
+			void* address = my_alloc(al);
+			std::cout << distFromBeg(address) << " " << address << std::endl;
+			memoryMap();
+			// printTree();
+			my_delete((void*)address);
+			memoryMap();
+			// printTree();
+			
+		}
+		*/
+		
+
+
+		/*
+		memoryMap();
+
+		void* address_IE = my_alloc(300);
+		std::cout << "ALLOC IE: " << distFromBeg(address_IE) << " " << address_IE << std::endl;
+		
+		// printTree();
+		memoryMap();
+		
+		void* address_Trojan = my_alloc(1);
+		std::cout << "ALLOC Trojan: " << distFromBeg(address_Trojan) << " " << address_Trojan << std::endl;
+		
+		memoryMap();
+		
+		void* address_Trojan1 = my_alloc(1);
+		std::cout << "ALLOC Trojan1: " << distFromBeg(address_Trojan1) << " " << address_Trojan1 << std::endl;
+
+		memoryMap();
+
+		my_delete(address_IE);
+		std::cout << "FREE IE" << std::endl;
+
+		memoryMap();
+		// printTree();
+
+		void* address_AVK = my_alloc(10);
+		std::cout << "ALLOC AVK: " << distFromBeg(address_AVK) << " " << address_AVK << std::endl;
+
+		memoryMap();
+		// printTree();
+
+		my_delete(address_Trojan);
+		std::cout << "FREE Trojan" << std::endl;
+
+		memoryMap();
+		// printTree();
+		*/
+
+
+		
+		/*
+		memoryMap();
+
+		void* address_IE = my_alloc(400);
+		std::cout << "ALLOC IE: " << distFromBeg(address_IE) << " " << address_IE << std::endl;
+		
+		// printTree();
+		memoryMap();
+		info();
+		
+		void* address_Trojan = my_alloc(400);
+		std::cout << "ALLOC Trojan: " << distFromBeg(address_Trojan) << " " << address_Trojan << std::endl;
+		
+		memoryMap();
+		info();
+		
+		void* address_Trojan1 = my_alloc(1);
+		std::cout << "ALLOC Trojan1: " << distFromBeg(address_Trojan1) << " " << address_Trojan1 << std::endl;
+
+		memoryMap();
+		info();
+		// printTree();
+
+		my_delete(address_Trojan);
+		std::cout << "FREE Trojan" << std::endl;
+
+		memoryMap();
+		info();
+		// printTree();
+		info();
+
+		void* address_AVK = my_alloc(100);
+		std::cout << "ALLOC AVK: " << distFromBeg(address_AVK) << " " << address_AVK << std::endl;
+
+		memoryMap();
+		info();
+		// printTree();
+
+		void* address_SMALL = my_alloc(1);
+		std::cout << "ALLOC SMALL: " << distFromBeg(address_SMALL) << " " << address_SMALL << std::endl;
+
+		memoryMap();
+		info();
+		// printTree();
+
+		void* address_R = my_alloc(200);
+		std::cout << "ALLOC R: " << distFromBeg(address_R) << " " << address_R << std::endl;
+
+		memoryMap();
+		info();
+		// printTree();
+
+		my_delete(address_IE);
+		std::cout << "FREE IE" << std::endl;
+
+		memoryMap();
+		info();
+
+		void* address_IESMALL = my_alloc(100);
+		std::cout << "ALLOC IESMALL: " << distFromBeg(address_IESMALL) << " " << address_IESMALL << std::endl;
+
+		memoryMap();
+		info();
+
+		// now it's in right position to test megrge - just free AVK
+
+		// printTree();
+		my_delete(address_R);
+		std::cout << "FREE R" << std::endl;
+
+		memoryMap();
+		info();
+
+
+		std::cout << std::endl << std::endl << "FREE AVK" << std::endl;
+		my_delete(address_AVK);
+
+		memoryMap();
+		info();
+		*/
+
+
+		/*
+		void* address_MEMEATER = my_alloc(253);
+		std::cout << "ALLOC MEMEATER: " << distFromBeg(address_MEMEATER) << " " << address_MEMEATER << std::endl;
+
+		memoryMap();
+		info();
+		*/

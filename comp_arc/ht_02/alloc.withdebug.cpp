@@ -1,14 +1,11 @@
-#include <cstdlib>
-#include <cstring>
-#include <cstdio>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 #include <iostream>
 #include <string>
 
-// strict mode means that you can free memory only using pointer to it's beginning
-// non-strinct means that its enough to have a pointer to the memory body
-#define MCB_FREE_STRICT_MODE
-// abbitional info means printing the memory map with brackets and with total space
-#define MCB_MAP_NO_ADDITIONAL_INFO
+
+// #define MCB_FREE_STRICT_MODE
 
 const unsigned char MCB_TYPE_ALLOCATED = 0;
 const unsigned char MCB_TYPE_FREE = 1;
@@ -32,18 +29,24 @@ struct mcb{
 const int MCB_SIZE = sizeof(mcb);
 mcb* MCB_NO_NODE = (mcb*)NULL;
 
-// global pointer to the beggining of the memory
+
 void* memoryBegin;
-// global memory size
 int memorySize;
 
+void* createMemory(int size);
+void dropMemory(void* ptr);
 void putMcb(void* ptr, int mcb_type, int mcb_freeSpace, int mcb_maxBlock, mcb* parent);
 void* my_alloc(mcb* node, size_t size);
+void* my_alloc(size_t size);
 void* alloc_here(mcb* node, int size);
+void my_delete(void *ptr);
 void update(mcb* node);
 void my_free(mcb* node);
+bool my_free(int blockNumber);
 mcb* merge(mcb* node_l, mcb* node_r, int height_l, int height_r);
+// void memoryMap(mcb* node);
 void memoryMap(mcb* node, int* count);
+void memoryMap();
 mcb* nearestRightNode(mcb* node);
 mcb* nearestRightTerminatingNode(mcb* node, int* height_l, int* height_r);
 mcb* nearestLeftTerminatingNode(mcb* node, int* height_l, int* height_r);
@@ -55,10 +58,10 @@ int distFromBeg(void** node);
 int distFromBeg(mcb* node);
 mcb* nodeFromBlockNumber(int blockNumber);
 int spaceToTheRight(mcb* node);
+void info();
 int usedBlocksCount(mcb* node);
 int usedMemoryCount(mcb* node);
 mcb* findNode(mcb* nodePtr);
-
 
 // debug functions
 void printTree(mcb* node);
@@ -66,29 +69,70 @@ void printTree();
 std::string addressToString(mcb* node);
 
 
-// interface functions
-void* my_alloc(size_t size);
-// concerning function my_delete:
-// it's stated in task, but is useless, because it's supposed to free space not with void* pointer
-// but with int pointer (shift from the beginning of the memory), so I made it but it's never used
-// my_free is used instead.
-void my_delete(void *ptr);
-bool my_free(int blockNumber);
-void memoryMap();
-void info();
+mcb* findNode(mcb* nodePtr){
+	mcb* node = (mcb*)memoryBegin;
+	std::cout << "findNode: node = " << distFromBeg(node) << std::endl;
+	while(node->child_l != MCB_NO_NODE){
+
+		if(node >= nodePtr) return MCB_NO_NODE; // this means we found node, but it has children => it's not allocatedspace => cannot free it
+
+		if( (int)(node->child_r) > (int)nodePtr ){
+			node = node->child_l;
+		} else {
+			node = node->child_r;
+		}
+		std::cout << "findNode: node = " << distFromBeg(node) << std::endl;
+	}
+	// here node->child_l == MCB_NO_NODE
+	// so
+	#ifdef MCB_FREE_STRICT_MODE
+	if(node == nodePtr){
+		return node;
+	} else {
+		return MCB_NO_NODE;
+	}
+	#else
+	return node;
+	#endif
+}
+
+int usedMemoryCount(mcb* node){
+
+	if(node->type == MCB_TYPE_ALLOCATED) return spaceToTheRight(node);
+	if(node->type == MCB_TYPE_FREE) return 0;
+
+	return usedMemoryCount(node->child_l) + usedMemoryCount(node->child_r);
+
+}
+int usedBlocksCount(mcb* node){
+
+	if(node->type == MCB_TYPE_ALLOCATED) return 1;
+	if(node->type == MCB_TYPE_FREE) return 0;
+
+	return usedBlocksCount(node->child_l) + usedBlocksCount(node->child_r);
+
+}
 
 
+void info(){
+	std::cout << usedBlocksCount((mcb*)memoryBegin) << " " << usedMemoryCount((mcb*)memoryBegin) << " " << ((mcb*)memoryBegin)->freeSpace << " " << ((mcb*)memoryBegin)->maxBlock << std::endl;
+}
 
 
+std::string addressToString(mcb* node){
+	// std::cout << "addressToString: distFromBeg(node)=" << distFromBeg(node) << std::endl;
 
-/******************************************\
-********************************************
-************* debug functions **************
-********************************************
-\******************************************/
+	if(node != MCB_NO_NODE){
+		char str[20];
+		sprintf(str, "%d", distFromBeg(node));
+		// std::cout << "addressToString: res=" << std::string(str) << std::endl;
+		return std::string(str);
+	} else {
+		// std::cout << "addressToString: res=NULL" << std::endl;
+		return std::string("NULL");
+	}
+}
 
-
-// prints nodes of the tree recoursevely from node
 void printTree(mcb* node){
 	std::cout << "[" << distFromBeg(node) << "]" << std::endl;
 	std::cout << "type = ";
@@ -116,180 +160,39 @@ void printTree(mcb* node){
 
 }
 
-
-// prints all nodes of the tree
 void printTree(){
 	printTree((mcb*)memoryBegin);
 }
 
-
-// converts mcb* to std::string (usefull to print nodes on the console)
-std::string addressToString(mcb* node){
-
-	if(node != MCB_NO_NODE){
-
-		char str[20];
-		sprintf(str, "%d", distFromBeg(node));
-
-		return std::string(str);
-
-	} else {
-
-		return std::string("NULL");
-
-	}
-}
-
-/******************************************\
-********************************************
-*********** interface functions ************
-********************************************
-\******************************************/
-
-
-// tries to allocate required amount of memory
-void* my_alloc(size_t size){
-	if( ((mcb*)memoryBegin)->maxBlock < size) return NULL;
-
-	return my_alloc((mcb*)memoryBegin, size);
-	
-}
-
-
-// it tries to free block where ptr points
-void my_delete(void* ptr){
-	mcb* mcbToBeKilled = (mcb*)( (int)ptr - MCB_SIZE );
-	my_free(mcbToBeKilled);
-}
-
-
-// it tries to free block blockNumber
-bool my_free(int blockNumber){
-	
-	mcb* nodePtr = nodeFromBlockNumber(blockNumber - MCB_SIZE);
-	mcb* node = findNode(nodePtr);
-	
-	if(node != MCB_NO_NODE){
-		my_free(node);
-		return true;
-	} else {
-		return false;
-	}
-}
-
-
-// prints memory map
-void memoryMap(){
-	int count = 0;
-	memoryMap((mcb*)memoryBegin, &count);
-
-	#ifdef MCB_MAP_NO_ADDITIONAL_INFO
-	std::cout << std::endl;
-	#else
-	std::cout << " totally " << count << std::endl;
-	#endif
-}
-
-
-// prints info
-void info(){
-	std::cout << usedBlocksCount((mcb*)memoryBegin) << " " << usedMemoryCount((mcb*)memoryBegin) << " " << ((mcb*)memoryBegin)->freeSpace << " " << ((mcb*)memoryBegin)->maxBlock << std::endl;
-}
-
-
-/******************************************\
-********************************************
-*********** all other functions ************
-********************************************
-\******************************************/
-
-
-// finds mcb record to which nodePtr points (checks if it really poins to mcb record of allocated block)
-// in STRICT_MODE if nodePtr to some place of allocated block (not the beginning) it returns MCB_NO_NODE
-// in nonSTRICT_MODE it returns pointer to the beginning of such block
-mcb* findNode(mcb* nodePtr){
-	mcb* node = (mcb*)memoryBegin;
-	
-	while(node->child_l != MCB_NO_NODE){
-
-		if(node >= nodePtr) return MCB_NO_NODE; // this means we found node, but it has children => it's not allocatedspace => cannot free it
-
-		if( (int)(node->child_r) > (int)nodePtr ){
-			node = node->child_l;
-		} else {
-			node = node->child_r;
-		}
-		
-	}
-	// here node->child_l == MCB_NO_NODE
-	// so
-
-	#ifdef MCB_FREE_STRICT_MODE
-	if(node == nodePtr){
-		return node;
-	} else {
-		return MCB_NO_NODE;
-	}
-	#else
-	return node;
-	#endif
-}
-
-
-// counts used memory space recoursively down the tree from given node
-int usedMemoryCount(mcb* node){
-
-	if(node->type == MCB_TYPE_ALLOCATED) return spaceToTheRight(node);
-	if(node->type == MCB_TYPE_FREE) return 0;
-
-	return usedMemoryCount(node->child_l) + usedMemoryCount(node->child_r);
-
-}
-
-
-// counts used blocks recoursively down the tree from given node
-int usedBlocksCount(mcb* node){
-
-	if(node->type == MCB_TYPE_ALLOCATED) return 1;
-	if(node->type == MCB_TYPE_FREE) return 0;
-
-	return usedBlocksCount(node->child_l) + usedBlocksCount(node->child_r);
-
-}
-
-
-// convert shift from memory beginning to mcb*
 mcb* nodeFromBlockNumber(int blockNumber){
 	return (mcb*)( (int)memoryBegin + blockNumber );
 }
 
-
-// convert void* to shift from memory beginning
 int distFromBeg(void* node){
 	return ((int)node - (int)memoryBegin);
 }
-
-
-// convert mcb* to shift from memory beginning
 int distFromBeg(mcb* node){
 	return ((int)node - (int)memoryBegin);
 }
 
+void memoryMap(){
+	int count = 0;
+	memoryMap((mcb*)memoryBegin, &count);
+	// std::cout << std::endl;
+	std::cout << " totally " << count << std::endl;
+}
 
-// prints memory map recoursively down the tree from node
-// counts the memory as well
 void memoryMap(mcb* node, int* count){
 	if(node == MCB_NO_NODE) return;
 
-	#ifdef MCB_MAP_NO_ADDITIONAL_INFO
-	#else
 	std::cout << "[";
-	#endif
 
 	int thisMCBBlockSize = MCB_SIZE;
 	if(node->type == MCB_TYPE_COMPOSITE && nearestRightNode(node) != MCB_NO_NODE){
 		thisMCBBlockSize += spaceToTheRight(node);
 	}
+
+	// std::cout << "memoryMap (" << distFromBeg(node) << "), thisMCBBlockSize=" << thisMCBBlockSize << std::endl;
 	
 	for(int i = 0; i < thisMCBBlockSize; i++){
 		++(*count);
@@ -297,36 +200,37 @@ void memoryMap(mcb* node, int* count){
 	}
 
 	if(node->type == MCB_TYPE_FREE){
-
 		for(int i = 0; i < node->freeSpace; i++){
 			++(*count);
 			std::cout << "f";
 		}
-
+		// return;
 	} else if(node->type == MCB_TYPE_ALLOCATED){
-		
 		int usedSpace = spaceToTheRight(node);
+		// int usedSpace = (int)((void*)(rightNeighboor(node))) - (int)((void*)node) - MCB_SIZE;
 		for(int i = 0; i < usedSpace; i++){
 			++(*count);
 			std::cout << "u";
 		}
-
+		// return;
 	} else {
-		
 		memoryMap(node->child_l, count);
 		memoryMap(node->child_r, count);
-
 	}
 
-	#ifdef MCB_MAP_NO_ADDITIONAL_INFO
-	#else
 	std::cout << "]";
-	#endif
 }
 
 
-// returns space pron end of this mcb record to the beginning of the nearest right one if
-// it exists or to end of memory elsewhere
+void* createMemory(int size){
+	return malloc(size);
+}
+void dropMemory(void* ptr){
+	free(ptr);
+}
+
+
+
 int spaceToTheRight(mcb* node){
 	mcb* node_r = nearestRightNode(node);
 	if(node_r == MCB_NO_NODE){
@@ -338,8 +242,6 @@ int spaceToTheRight(mcb* node){
 	}
 }
 
-
-// puts new mcb record with given parameters where ptr points to.
 void putMcb(void* ptr, int mcb_type, int mcb_freeSpace, int mcb_maxBlock, mcb* parent){
 	
 	mcb newMcbBlock;
@@ -354,8 +256,6 @@ void putMcb(void* ptr, int mcb_type, int mcb_freeSpace, int mcb_maxBlock, mcb* p
 	memcpy(ptr, &newMcbBlock, MCB_SIZE);
 }
 
-
-// initializes the tree, writes the first mcb record (root of the tree)
 bool init(void* ptr, int size){
 	// if not enough memory => can't start
 	if(size < MCB_SIZE) return false;
@@ -365,56 +265,48 @@ bool init(void* ptr, int size){
 }
 
 
-// checks if node is root
 inline bool isRoot(mcb* node){
 	return (node->parent == MCB_NO_NODE);
 }
 
-
-// checks if node is free
 inline bool isFree(mcb* node){
 	if(node == MCB_NO_NODE) return false;
 	return (node->type == MCB_TYPE_FREE);
 }
 
-
-// finds right neighboor of the node
 inline mcb* rightNeighboor(mcb* node){
 	// this function expects that it exists (i.e. it doesn't check if node->parent->child_r == node)
 	return node->parent->child_r;
 }
 
-
-// finds left neighboor of the node
 inline mcb* leftNeighboor(mcb* node){
 	// this function expects that it exists (i.e. it doesn't check if node->parent->child_l == node)
 	return node->parent->child_l;
 }
 
-
-// finds nearest (to given) node to the right. Not terminating - just any.
-// for example if this one has child_l, then child_l would be the answer
 mcb* nearestRightNode(mcb* node){
-
+	// std::cout << "nearestRightNode(" << distFromBeg(node) << ") = ";
 	if(node->child_l != MCB_NO_NODE){
+		// std::cout << distFromBeg(node->child_l) << std::endl;
 		return node->child_l;
 	}
 
 	while(1){
 		if(node->parent == MCB_NO_NODE){
+			// std::cout << distFromBeg(MCB_NO_NODE) << std::endl;
 			return MCB_NO_NODE;
 		}
+		// std::cout << "node=" << distFromBeg(node) << std::endl;
 		if(node == node->parent->child_r){
 			node = node->parent; 
 		} else {
+			// std::cout << distFromBeg(node->parent->child_r) << std::endl;
 			return node->parent->child_r;
 		}
 	}
 }
 
 
-// finds nearest terminating node (leaf) to the right of this one
-// counts height_l and height_r - distance from node and nearestRightTerminatingNode to their LCA
 mcb* nearestRightTerminatingNode(mcb* node, int* height_l, int* height_r){
 
 	// height_l and height_r are values how far do we have to climb to reach LCA
@@ -442,9 +334,6 @@ mcb* nearestRightTerminatingNode(mcb* node, int* height_l, int* height_r){
 	return node;
 }
 
-
-// finds nearest terminating node (leaf) to the left of this one
-// counts height_l and height_r - distance from nearestLeftTerminatingNode and node to their LCA
 mcb* nearestLeftTerminatingNode(mcb* node, int* height_l, int* height_r){
 	// height_l and height_r are values how far do we have to climb to reach LCA
 	// of node and it's nearestLeftTerminatingNode (from nearestLeftTerminatingNode - height_l, from node - height_r)
@@ -472,41 +361,50 @@ mcb* nearestLeftTerminatingNode(mcb* node, int* height_l, int* height_r){
 	return node;
 }
 
-
-// this function expects that node really points to the terminating node (leaf) of the tree
-// it makes it free and then calls merge if neccessery
 void my_free(mcb* node){
 	
-	int height_l = 0;
-	int height_r = 0;
+	// std::cout << "my_free " << distFromBeg(node) << std::endl;
 
-	// first simply erase this node
-	node->type = MCB_TYPE_FREE;
-	// in node->freeSpace put the space between this node and the next to the right
-	node->freeSpace = spaceToTheRight(node);
-	node->maxBlock = node->freeSpace;
+	if(/*isRoot(node)*/0){
+		// std::cout << "my_free : node is root" << std::endl;
+	} else {
 
-	// and then merge with nearest nodes if they are free too
-	// merge here is the most complicated thing
-	mcb* nearest_r_term = nearestRightTerminatingNode(node, &height_l, &height_r);
-	if(isFree(nearest_r_term)){
-		node = merge(node, nearest_r_term, height_l, height_r);
+		// bool isLeftChild = (node->parent->child_l == node);
+
+		int height_l = 0;
+		int height_r = 0;
+
+		// first simply erase this node
+		node->type = MCB_TYPE_FREE;
+		// in node->freeSpace put the space between this node and the next to the right
+		node->freeSpace = spaceToTheRight(node);
+		node->maxBlock = node->freeSpace;
+		// std::cout << "my_free : node->freeSpace=" << node->freeSpace << std::endl;
+
+		// memoryMap();
+
+		// and then merge with nearest nodes if they are free too
+		// merge here is the most complicated thing
+		mcb* nearest_r_term = nearestRightTerminatingNode(node, &height_l, &height_r);
+		if(isFree(nearest_r_term)){
+			node = merge(node, nearest_r_term, height_l, height_r);
+		}
+		mcb* nearest_l_term = nearestLeftTerminatingNode(node, &height_l, &height_r);
+		if(isFree(nearest_l_term)){
+			node = merge(nearest_l_term, node, height_l, height_r);
+		}
+		update(node);
 	}
-	mcb* nearest_l_term = nearestLeftTerminatingNode(node, &height_l, &height_r);
-	if(isFree(nearest_l_term)){
-		node = merge(nearest_l_term, node, height_l, height_r);
-	}
-	update(node);
-
 }
 
 
-// the most complicated thing
-// this function merges node_l and node_r. It expects that theese 2 nodes are two nearest terminating nodes (leaves)
-// and that both of them are free
 mcb* merge(mcb* node_l, mcb* node_r, int height_l, int height_r){
 	
 
+	// this function merges node_l and node_r. It expects that theese 2 nodes are two nearest terminating nodes (leaves)
+	// and that both of them are free
+
+	// std::cout << "merge (" << distFromBeg(node_l) << "," << distFromBeg(node_r) << ", height_l=" <<  height_l << ", height_r=" << height_r << ")" << std::endl;
 
 	mcb* thingToReturn;
 
@@ -525,6 +423,8 @@ mcb* merge(mcb* node_l, mcb* node_r, int height_l, int height_r){
 			node_l->parent->child_l = MCB_NO_NODE;
 			node_l->parent->child_r = MCB_NO_NODE;
 
+			// std::cout << "fullSpace=" << fullSpace << std::endl;
+
 			update(node_l->parent);
 
 		} else {
@@ -542,6 +442,8 @@ mcb* merge(mcb* node_l, mcb* node_r, int height_l, int height_r){
 			node_l->freeSpace = fullSpace;
 			node_l->maxBlock = fullSpace;
 
+			// std::cout << "fullSpace=" << fullSpace << std::endl;
+
 			// but update can fix this
 			update(node_l);
 			update(node_l_left_neighboor);
@@ -558,6 +460,13 @@ mcb* merge(mcb* node_l, mcb* node_r, int height_l, int height_r){
 		node_r_right_neighboor->parent = node_r->parent->parent;
 		node_r->parent->parent->child_r = node_r_right_neighboor;
 		
+		// std::cout << "spaceToTheRight(" << distFromBeg(node_l) << ")=" << spaceToTheRight(node_l) << std::endl;
+		// std::cout << "spaceToTheRight(" << distFromBeg(node_r->parent) << ")=" << spaceToTheRight(node_r->parent) << std::endl;
+		// std::cout << "spaceToTheRight(" << distFromBeg(node_r) << ")=" << spaceToTheRight(node_r) << std::endl;
+
+		// int addedSpace = spaceToTheRight(node_l) + spaceToTheRight(node_r->parent) + spaceToTheRight(node_r) + 2 * MCB_SIZE; // this is too slow, but
+		// int addedSpace = (int)node_r_right_neighboor - (int)(node_r->parent); // this and previous are equivalent
+
 		node_l->freeSpace = fullSpace;
 		node_l->maxBlock = fullSpace;
 
@@ -569,6 +478,8 @@ mcb* merge(mcb* node_l, mcb* node_r, int height_l, int height_r){
 		thingToReturn = node_l;
 
 		mcb* node_r_right_neighboor = rightNeighboor(node_r);
+		// std::cout << "node_r_right_neighboor=" << distFromBeg(node_r_right_neighboor) << std::endl;
+
 
 		// here all space of node_r comes to node_l, so node_r vanishes, we drop the parent of the node_r
 		// and the grendparent of the node_r becomes the parent of right neighboor of node_r
@@ -581,10 +492,15 @@ mcb* merge(mcb* node_l, mcb* node_r, int height_l, int height_r){
 		mcb* node_dst = (mcb*)( (int)rightNeighboor(node_r) - MCB_SIZE);
 
 		for(int i = 2; i < height_r; i++){
+			// IMPORTANT - redirect links first and copy memory after
+			
 
 			// copy the node
+			// std::cout << "memcpy(" << distFromBeg(node_src) << ", " << distFromBeg(node_dst) << ")" << std::endl;
 			memcpy(  (void*)node_dst, (void*)node_src, MCB_SIZE);
+			// std::cout << "memcpy() success" << std::endl;
 
+			
 
 			// redirect it's children to the right place
 			node_src->child_l->parent = node_dst;
@@ -595,7 +511,9 @@ mcb* merge(mcb* node_l, mcb* node_r, int height_l, int height_r){
 
 
 			// and move up the tree
+			// std::cout << "node_src = node_src->parent;" << std::endl;
 			node_src = node_src->parent;
+			// std::cout << "node_src = node_src->parent;" << std::endl;
 			node_dst = (mcb*)((int)node_dst - MCB_SIZE);
 		}
 		// now node_dst points to place where we didn't write (it has been shifted two lines ago)
@@ -610,20 +528,17 @@ mcb* merge(mcb* node_l, mcb* node_r, int height_l, int height_r){
 		node_l->freeSpace = fullSpace;
 		node_l->maxBlock = fullSpace;
 
+		// std::cout << "ready to update" << std::endl;
 		update(node_l);
 		update(node_r_right_neighboor);
 	}
 
+	// std::cout << "return " << distFromBeg(thingToReturn) << std::endl;
 	return thingToReturn;
 }
 
-
-// allocates size bytes where node points
-// if there are at least size + 2 * MCB_SIZE bytes free it
-// creates 2 new blocks (new children of node - new allocated block for user and block of rest free memory)
-// if not - it makes node have type allocated and gives all the space it has to user
 void* alloc_here(mcb* node, int size){
-	
+	// std::cout << "alloc_here " << distFromBeg(node) << std::endl;
 	if(node->freeSpace < size) return NULL; // I don't know how can we get here, but anyway - if there's not enough space => do nothing
 
 	if(node->freeSpace >= size + 2 * MCB_SIZE){
@@ -640,11 +555,14 @@ void* alloc_here(mcb* node, int size){
 		node->child_r = (mcb*)( placeForChild_r );
 		node->type = MCB_TYPE_COMPOSITE;
 
+		// std::cout << "putMcb( placeForChild_l, MCB_TYPE_ALLOCATED, 0, 0, node ); placeForChild_l=" << distFromBeg(placeForChild_l) << std::endl;
 		putMcb( placeForChild_l, MCB_TYPE_ALLOCATED, 0, 0, node );
+		// std::cout << "putMcb( placeForChild_r, MCB_TYPE_FREE, spaceLeft, spaceLeft, node ); placeForChild_r=" << distFromBeg(placeForChild_r) << std::endl;
 		putMcb( placeForChild_r, MCB_TYPE_FREE, spaceLeft, spaceLeft, node );
 
 		update(node);
 
+		// std::cout << "alloc_here: readyToReturn" << std::endl;
 		return startOfAllocatedSpace;
 
 	} else {
@@ -662,11 +580,8 @@ void* alloc_here(mcb* node, int size){
 	}
 }
 
-
-// finds right place where to allocate memory and calls alloc_here there.
-// it expects that allocation is possible (the calling function checks this)
 void* my_alloc(mcb* node, size_t size){
-	
+	// std::cout << "my_alloc(" << distFromBeg(node) << ", " << size << ")" << std::endl;
 	if(node->child_l == MCB_NO_NODE){
 		// no left child => no children at all => allocate here
 		return alloc_here(node, size);
@@ -684,7 +599,7 @@ void* my_alloc(mcb* node, size_t size){
 				return my_alloc(node->child_r, size);
 			}
 		} else {
-			// the same
+			// the samememoryBegin
 			if( (node->child_r->maxBlock) > size){
 				return my_alloc(node->child_r, size);
 			} else {
@@ -695,21 +610,47 @@ void* my_alloc(mcb* node, size_t size){
 	}
 }
 
+void* my_alloc(size_t size){
+	if( ((mcb*)memoryBegin)->maxBlock < size) return NULL;
 
-// goes up the tree from node to root and corrects maxBlock and freeSpace fields of the nodes
+	return my_alloc((mcb*)memoryBegin, size);
+	
+}
+
+void my_delete(void *ptr){
+	mcb* mcbToBeKilled = (mcb*)( (int)ptr - MCB_SIZE );
+	my_free(mcbToBeKilled);
+}
+
+bool my_free(int blockNumber){
+	mcb* nodePtr = nodeFromBlockNumber(blockNumber - MCB_SIZE);
+	mcb* node = findNode(nodePtr);
+	std::cout << "findNode(" << distFromBeg(nodePtr) << ") = " << distFromBeg(node) << std::endl;
+	if(node != MCB_NO_NODE){
+		my_free(node);
+		return true;
+	} else {
+		return false;
+	}
+}
+
 void update(mcb* node){
 
+	// std::cout << "update(" << distFromBeg(node) << ")" << std::endl;
 
 	if(node->child_l != MCB_NO_NODE){
 		
 		
 		if(node->child_l != node->child_r){
 
+			// std::cout << "update: child_l != child_r" << std::endl;
 			// if this node is OK (child_l != child_r) => racalculate it's parameters
 			node->maxBlock = std::max( node->child_l->maxBlock, node->child_r->maxBlock );
 			node->freeSpace = node->child_l->freeSpace + node->child_r->freeSpace;
 
 		} else {
+
+			// std::cout << "update: child_l == child_r" << std::endl;
 		
 			// if not OK => jusk drop this node. Unfortunately we can't reuse this space.
 			if(node->parent->child_l == node){
@@ -725,18 +666,19 @@ void update(mcb* node){
 	if( node->parent != MCB_NO_NODE ){
 		update(node->parent);
 	}
+	// std::cout << "update ret" << std::endl;
 }
 
 
 
 
-int main(){
 
+int main(){
+	
 	// freopen("alloc.in", "rt", stdin);
 
 	memorySize = 0;
 	memoryBegin = NULL;
-
 	const char POSSIBLE_COMMANDS[] = "ALLOC, FREE, INFO, MAP, EXIT";
 
 	std::cin >> memorySize;
@@ -752,7 +694,10 @@ int main(){
 			return FERROR_TOO_FEW_MEMORY;
 		}
 
+		
 
+
+		
 		while(1){
 
 			std::string str;
@@ -799,7 +744,9 @@ int main(){
 				std::cout << "error: programm could not recognise command: \"" << str << "\", avaliable commads are: " << POSSIBLE_COMMANDS << std::endl;
 
 			}
+
 		}
+
 
 		free(memoryBegin);
 
