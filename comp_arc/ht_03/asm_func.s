@@ -14,8 +14,11 @@ asm_func:
 	pop		%ebp
 	
 	
-	mov		%gdtr, %eax
+	mov		$6, %eax
+	lgdt	%eax
 	ret
+
+
 
 #	movl	$3, %ebx
 #	movl	$1, %eax

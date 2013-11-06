@@ -1,0 +1,45 @@
+>> x=-10:0.1:10;
+>> lambda=1;
+>> y=cos(2*pi*x/lambda);
+>> ploy(x,y)
+Undefined function 'ploy' for input arguments of type 'double'.
+ 
+>> plot(x,y);
+>> 
+>> lambda=20;
+>> y=cos(2*pi*x/lambda);
+>> plot(x,y);
+>> sigma=2;
+>> g=exp(-0.5*(x.^2)/sigma^2);
+>> plot(x,g);
+>> gd=y.*g;
+>> plot(x,gd);
+>> lambda=5;
+>> gd=y.*g;
+>> plot(x,gd);
+>> y=cos(2*pi*x/lambda);
+>> gd=y.*g;
+>> plot(x,gd);
+>> [X,Y]=meshgrid(-10:0.1:10);
+>> theta=0;
+>> x_theta=X*cos(theta) + Y*sin(theta);
+>> cos2d=cos(2*pi*x_theta/lambda);
+>> mesh(X,Y,cos2d);
+>> theta=pi/2;
+>> x_theta=X*cos(theta) + Y*sin(theta);
+>> mesh(X,Y,cos2d);
+>> cos2d=cos(2*pi*x_theta/lambda);
+>> mesh(X,Y,cos2d);
+>> A=1;
+>> a=0.5;
+>> b=0;
+>> c=0.5;
+>> g2d=A*exp(-(a*X.^2 + b*X*Y + c*Y.^2));
+>> mesh(X,Y,g2d);
+>> gb2d=g2d.*cos2d;
+>> mesh(X,Y,gb2d);
+>> figure
+>> mesh(X,Y,gb2d);
+>> surf(X,Y,gb2d);shading interp;view(-36,36);drawnow;
+>> surf(X,Y,gb2d);shading interp;view(-36,36);drawnow;
+>> 
