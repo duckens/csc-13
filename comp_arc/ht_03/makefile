@@ -1,2 +1,3 @@
 all:
-	gcc asm_func.s main.c -o test
+	g++ main.cpp -o exe
+	

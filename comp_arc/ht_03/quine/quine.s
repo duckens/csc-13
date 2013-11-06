@@ -1,0 +1,23 @@
+push $10
+push $34
+push $s
+push $34
+push $37
+push $37
+push $s
+call printf
+mov $0,%ebx
+mov $1,%eax
+int $128
+s:.ascii "push $10
+push $34
+push $s
+push $34
+push $37
+push $37
+push $s
+call printf
+mov $0,%cebx
+mov $1,%ceax
+int $128
+s:.ascii %c%s%c%c"
