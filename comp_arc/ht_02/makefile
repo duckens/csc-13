@@ -1,2 +1,2 @@
 all:
-	g++ alloc.cpp -o alloc 
+	g++ alloc.cpp -o alloc
