@@ -15,7 +15,7 @@ void printGdtRecordStruct(gdtRecordStruct struc){
 	std::cout << "default size 0 - 16bit, 1 - 32bit=" << struc.d << std::endl;
 	std::cout << "granularity 0 - 1byte, 1 - 4Kb page=" << struc.g << std::endl;
 	std::cout << "dpl=" << struc.dpl << std::endl;
-	std::cout << "baseAddress=" << struc.baseAddress << std::endl;
+	std::cout << "baseAddress=" << std::hex << struc.baseAddress << std::dec << std::endl;
 	std::cout << "segmentLimit=" << struc.segmentLimit << std::endl;
 	std::cout << std::endl;
 }
@@ -41,8 +41,8 @@ void printLinearAddressStruct(linearAddressStruct las){
 void printPDRecordStruct(pdRecordStruct pdrs){
 	std::cout << "[pdRecordStruct]" << std::endl;
 	
-	std::cout << "baseAddress=" << pdrs.baseAddress << std::endl;
-	std::cout << "baseAddressLargePage=" << pdrs.baseAddressLargePage << std::endl;
+	std::cout << "baseAddress=" << std::hex << pdrs.baseAddress << std::dec << std::endl;
+	std::cout << "baseAddressLargePage=" << std::hex << pdrs.baseAddressLargePage << std::dec << std::endl;
 	std::cout << "userAlailable=" << pdrs.userAlailable << std::endl;
 	
 	std::cout << "present=" << pdrs.present << std::endl;

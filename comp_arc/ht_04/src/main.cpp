@@ -102,7 +102,7 @@ int main(int argc, char** argv){
 	std::cin >> std::dec  >> ptRecordsAmount;
 	pt->resize(ptRecordsAmount);
 	for(uint32_t i = 0; i < ptRecordsAmount; i++){
-		std::cin >> std::hex >> (*pt)[i];	
+		std::cin >> std::hex >> (*pt)[i];
 	}
 	#ifdef DEBUG
 	std::cout << "ptRecordsAmount=" << ptRecordsAmount << std::endl;

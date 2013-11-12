@@ -29,7 +29,7 @@ uint32_t pdResolveAddress(bool* physicalAddress_valid, bool* pageInMemory, std::
 
 			if(inMemory(&pdrs) && canFindPDPTRecord(pt, las->table)){
 
-				pdRecordStruct ptrs = pasrePDRecord((*pt)[las->directory]);
+				pdRecordStruct ptrs = pasrePDRecord((*pt)[las->table]);
 
 				#ifdef DEBUG
 				printPDRecordStruct(ptrs);
