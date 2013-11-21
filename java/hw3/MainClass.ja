@@ -1,0 +1,31 @@
+import java.util.*;
+public class MainClass{
+
+	static MyMultiset<String> multiset;
+
+	public static void main(String[] args) {
+		
+		multiset = new MyMultiset<String>();
+
+		System.out.println("Hello!");
+		System.out.println(multiset.size());
+
+		multiset.add("Hi");
+		multiset.add("Hi");
+		multiset.add("Hi");
+		multiset.add("Wooho");
+		multiset.add("Hi");
+		
+		System.out.println(multiset.size());
+
+		Iterator<String> it =  multiset.iterator();
+		
+		while(it.hasNext()){
+			System.out.println(it.next());
+			it.remove();
+		}
+
+		System.out.println(multiset.size());
+
+	}
+}
