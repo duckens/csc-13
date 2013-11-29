@@ -21,11 +21,18 @@ From pc:
 6) ssh root@192.168.20.202 -p 3000
 su (this is the place where uoy really need root privelleges)
 export PATH=${PATH}:/data/botbrew/bin/
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/data/botbrew/lib/
+export TERMINFO=/data/botbrew/lib/terminfo
+export TERM=linux
 
 
 now you can create and compile smth
 
-By the way, scp works also (from pc to android)
+By the way, scp works also (from pc to android):
+scp -P 3000 sgn.s root@192.168.10.202:/mnt/sdcard/csc-13/ht_06/
+
+running file command (file command can't find it's magic.mgc file):
+file -m /data/botbrew/share/misc/magic.mgc ./filename
 
 
 
