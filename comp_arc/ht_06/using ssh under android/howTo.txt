@@ -1,0 +1,31 @@
+From android:
+
+0) root your phone
+
+1) install botbrew
+
+2) and install all necessery packages:
+gcc, binutils, file, nano, etc.
+
+3) install connect bot
+4)install ssh server
+
+5) configure ssh server:
+login: root
+password: root
+port: 3000
+
+
+From pc:
+
+6) ssh root@192.168.20.202 -p 3000
+su (this is the place where uoy really need root privelleges)
+export PATH=${PATH}:/data/botbrew/bin/
+
+
+now you can create and compile smth
+
+By the way, scp works also (from pc to android)
+
+
+
