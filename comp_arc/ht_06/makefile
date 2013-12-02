@@ -1,18 +1,22 @@
-all: make_directories library copy_lib executable copy_ex
+all: simple
 
 BIN_DIR := ./bin
+LIB_DIR := ./lib
+TARGET_BIN_DIR := /data/botbrew/bin
+TARGET_LIB_DIR := /data/botbrew/lib
 
-make_directories:
+simple:
+	gcc putsprint.s -o libhello.so -shared
+	gcc main.c -o test_main -lhello -L.
+
+phone:
 	mkdir -p $(BIN_DIR)
+	mkdir -p $(LIB_DIR)
+	gcc putsprint.s -o $(LIB_DIR)/libhello.so -shared
+	cp $(LIB_DIR)/libhello.so $(TARGET_LIB_DIR)
+	gcc main.c -o $(BIN_DIR)/test_main -lhello
+	cp $(BIN_DIR)/test_main $(TARGET_BIN_DIR)
 
-library:
-	gcc sysprint.s -o $(BIN_DIR)/libtestsysprint.so -shared
-
-copy_lib:
-	cp $(BIN_DIR)/libtestsysprint.so /data/botbrew/lib/
-
-executable:
-	gcc main.c sgn.s -o $(BIN_DIR)/test_main -ltestsysprint
-
-copy_ex:
-	cp $(BIN_DIR)/test_main /data/botbrew/bin/
+kill:
+	rm $(TARGET_BIN_DIR)/test_main
+	rm $(TARGET_LIB_DIR)/libtestsysprint.so
