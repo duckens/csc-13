@@ -1,0 +1,661 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0040)http://whiteboard.ping.se/Android/Debian -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>How to run Debian or Ubuntu GNU/Linux on your Android </title>
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <link rel="stylesheet" href="./How to run Debian or Ubuntu GNU Linux on your Android_files/blog.css" type="text/css">
+  <link rel="icon" href="http://whiteboard.ping.se/pub/skins/blog/blogicon.gif" type="image/gif">
+  <link rel="SHORTCUT ICON" href="http://whiteboard.ping.se/pub/skins/blog/blogicon.gif">
+  <!--HeaderText--><style type="text/css"><!--
+  ul, ol, pre, dl, p { margin-top:0px; margin-bottom:0px; }
+  code.escaped { white-space: nowrap; }
+  .vspace { margin-top:1.33em; }
+  .indent { margin-left:40px; }
+  .outdent { margin-left:40px; text-indent:-40px; }
+  a.createlinktext { text-decoration:none; border-bottom:1px dotted gray; }
+  a.createlink { text-decoration:none; position:relative; top:-0.5em;
+    font-weight:bold; font-size:smaller; border-bottom:none; }
+  img { border:0px; }
+  
+div.eqn { margin: 0 2em; }
+div.eqn table { width: 100%; }
+div.eqn iframe {
+ width: 100%;
+ height: 80px;
+}.editconflict { color:green; 
+  font-style:italic; margin-top:1.33em; margin-bottom:1.33em; }
+
+  table.markup { border:2px dotted #ccf; width:90%; }
+  td.markup1, td.markup2 { padding-left:10px; padding-right:10px; }
+  table.vert td.markup1 { border-bottom:1px solid #ccf; }
+  table.horiz td.markup1 { width:23em; border-right:1px solid #ccf; }
+  table.markup caption { text-align:left; }
+  div.faq p, div.faq pre { margin-left:2em; }
+  div.faq p.question { margin:1em 0 0.75em 0; font-weight:bold; }
+  div.faqtoc div.faq * { display:none; }
+  div.faqtoc div.faq p.question 
+    { display:block; font-weight:normal; margin:0.5em 0 0.5em 20px; line-height:normal; }
+  div.faqtoc div.faq p.question * { display:inline; }
+   
+    .frame 
+      { border:1px solid #cccccc; padding:4px; background-color:#f9f9f9; }
+    .lfloat { float:left; margin-right:0.5em; }
+    .rfloat { float:right; margin-left:0.5em; }
+a.varlink { text-decoration:none; }
+
+--></style>  <meta name="robots" content="index,follow">
+  <link rel="stylesheet" href="./How to run Debian or Ubuntu GNU Linux on your Android_files/blog2.css" type="text/css"><meta name="description" content="How to run Debian or Ubuntu GNU/Linux on your Android device">
+
+</head>
+<body>
+<!--PageHeaderFmt-->
+<table id="bloghead" cellspacing="0" cellpadding="0" align="center"><tbody><tr>
+  <td id="homelink"><a href="http://whiteboard.ping.se/">Whiteboard Web</a></td>
+  <td id="wikicmds">  </td>
+</tr></tbody></table>
+<!--/PageHeaderFmt-->
+<table id="blogmid" cellspacing="0" cellpadding="0" align="center"><tbody><tr>
+  <td id="blogbody" valign="top">
+<!--PageTitleFmt-->
+    <div id="location"><span class="pagegroup"><a href="http://whiteboard.ping.se/Android">Android</a> »</span>
+    <h1 class="pagetitle">How to run Debian or Ubuntu GNU/Linux on your Android</h1></div>
+<!--/PageTitleFmt--><!--PageTitleAltFmt--><!--/PageTitleAltFmt-->
+<!--PageText-->
+<div id="wikitext">
+<div class="vspace"></div><h2>Integrating GNU/Linux with Android The Matrix Way</h2>
+<div><span class="rfloat"><img src="./How to run Debian or Ubuntu GNU Linux on your Android_files/schematics.png" alt="GNU/Linux on Android" title="GNU/Linux on Android"></span></div>
+<p class="vspace">The most seamless way extending your Android device with a full blown GNU/Linux such as Debian (or Ubuntu) is running the Android system in a chroot environment in the Debian file system. This way you can access the Android system from Debian without restrictions at the same time no modifications to the Android system itself are needed. 
+</p>
+<p class="vspace">This description requires general computer skills such as GNU/Linux but not necessary specific knowledge about Android - but it sure helps. You will have to install the Android SDK toolkit, and if you are not comfortable running pre-compiled binaries from dubious sources, you may have to get at least parts of the Android OS source code as well.
+</p>
+<p class="vspace">A new init procedure mounting a new root file system, transferring control to the Android init in a chroot environment is implemented as described here below. The pros compared to other methods are many.
+</p>
+<div class="vspace"></div><h3>Features</h3>
+<ul><li>Full GNU/Linux Debian installation with lots of apt-get:able packages
+</li><li>Full control of the Android environment from Debian
+</li><li>Simultaneous use of Debian as well as Android
+</li><li>Access the Android file system from your workstation desktop via ssh/sftp
+</li><li>No need to unmount/remount the SDcard accessing it via ssh/sftp
+</li><li>Makes it easy to backup both the Android as well as the Debian system
+</li><li>Android system untouched and unaware of any modifications
+</li><li>Android root file system no longer volatile, edits are kept between reboots
+</li><li>Critical file systems kept on SDcard for easy access in case of major f**k up
+</li><li>Graphic X11 Windows user interface, both client and server, local and remote, native, over SSH or VNC
+</li><li>Zero performance impact
+</li><li>Easy to modify your Android ROM selectively, without the need to reflash the entire device.
+</li><li>Manage your Android device as any other GNU/Linux system
+</li></ul><div class="vspace"></div><h3>Requirements (click on each topic for more info)</h3>
+<ul><li><a class="urllink" href="http://developer.android.com/sdk/index.html">Android SDK toolkit</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/Android/BootLoader">Your Android device boot image and the ability to flash your device</a> (or your favorite ROM)
+</li><li><a class="urllink" href="http://busybox.net/downloads/binaries/latest/busybox-armv4tl">A static linked binary of busybox for the ARM architecture</a>
+</li><li>An SDcard, preferable fast (class 10) and large capacity (32GB)
+</li><li>A GNU/Linux machine with an SDcard reader
+</li><li>Root access on the Android device (makes things smoother, but in the end you'll get it anyway)
+</li></ul><div class="vspace"></div><h3>Steps</h3>
+<ul><li>Partition an SDcard into two partitions, one FAT, one GNU/Linux (e.g. ext3 or ext4)
+</li><li>Create a new initramfs to flash the device with
+</li><li>Create a Debian root file system on the second partition of the SDcard
+</li><li>Copy the original Android root file system to /android in the Debian file system tree
+</li></ul><p class="vspace"><strong>Disclaimer</strong> - <em>The instructions here are not for your device explicit, and you can <strong>not</strong> follow them by the letter, but have to adjust them for your telephone or tablet. Most often I've highlighted what you may need to change. If you're not experienced flashing you phone there's also a risk you render it useless, becoming the proud  owner of an expensive brick. This solution is primary intended for the experienced GNU/Linux hacker, system administrator or app developer wanting full control over the Android device using a standard GNU/Linux environment. For the novice wanting to run GNU/Linux on his mobile device for the fun of it, there are other less powerful solutions I'd recommend before this one.</em>
+</p>
+<div class="vspace"></div><h2>Partition the SDcard</h2>
+<div><span class="lfloat"> <img src="./How to run Debian or Ubuntu GNU Linux on your Android_files/sdcard.jpg" alt="" title=""></span></div>
+<p>Get a large capacity SDcard and create two partitions. Make sure it's fast as well (class 10). Make the first partition the standard FAT file system used by various apps. Make the second a GNU/Linux partition for the Debian root filesystem. Use ext4 if your Android kernel supports it, else chose the best supported. Look in <code>/proc/filesystems, /proc/config.gz</code> or so on your device. Partitions the SDcard on your ordinary GNU/Linux machine using <code>fdisk</code>. Keep the sector boundaries aligned with the factor as the first partition on the card when shipped. This will ensure partition aliment for best performance. Some solid state disks gets terrible performance unaligned.
+</p>
+<p class="vspace">At your desktop computer
+</p><div class="frame"> 
+<pre class="escaped">root@workstation:~# fdisk -cu /dev/sdf
+
+Command (m for help): p
+
+Disk /dev/sdf: 32.0 GB, 32018268160 bytes
+170 heads, 53 sectors/track, 6940 cylinders, total 62535680 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0x00000000
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdf1              53    13839359     6919653+   c  W95 FAT32 (LBA)
+/dev/sdf2        13839360    62529399    24345020   83  Linux
+</pre>
+</div>
+<p class="vspace">Here the alignment is 53 sectors, i.e. even tracks, so I make sure the start sector of both partitions is a multiple of this. I chose to split 32G into 8G FAT plus 24G ext4. The Debian base environment including X11 is just above 1GB in size, so 24G may be overkill.
+</p>
+<p class="vspace">Create new file systems with mkfs.
+</p>
+<p class="vspace">At your desktop computer
+</p><div class="frame"> 
+<pre class="escaped"># mkfs -t vfat /dev/sdf1
+# mkfs -t ext4 /dev/sdf2
+</pre>
+</div>
+<div class="vspace"></div><h2>Creating the initramfs</h2>
+<p>Replace the initramfs shipped with your device with your own modified. Use an init mounting a new root file system from the SDcards GNU/Linux partition and transfer control to this.
+</p>
+<p class="vspace">Below is an example of the /init of the initramfs file system. It must be named /init because this is hardcoded into the Android kernel to execute upon boot. You most certainly need to change <code>/dev/mmcblk1p2</code> to the name of your SDcard second partition.
+</p>
+<p class="vspace">On The ASUS Transformer TF101 the second partition is named <code>/dev/mmcblk1p2</code> but look at your device to see what your is called.
+</p>
+<p class="vspace">From your desktop shell to your Android device
+</p><div class="frame"> 
+<pre class="escaped">$ adb shell
+$ mount
+rootfs / rootfs ro,relatime 0 0
+tmpfs /dev tmpfs rw,relatime,mode=755 0 0
+devpts /dev/pts devpts rw,relatime,mode=600 0 0
+proc /proc proc rw,relatime 0 0
+sysfs /sys sysfs rw,relatime 0 0
+tmpfs /mnt/asec tmpfs rw,relatime,mode=755,gid=1000 0 0
+tmpfs /mnt/obb tmpfs rw,relatime,mode=755,gid=1000 0 0
+/dev/block/mtdblock0 /system yaffs2 ro,relatime 0 0
+/dev/block/mtdblock3 /data yaffs2 rw,nosuid,nodev,relatime 0 0
+/dev/block/mtdblock2 /cache yaffs2 rw,nosuid,nodev,relatime 0 0
+/dev/block/mtdblock1 /data/idd yaffs2 rw,nosuid,nodev,relatime 0 0
+</pre>
+<pre style="background-color: yellow;" class="escaped">/dev/block/vold/179:1 /mnt/sdcard vfat rw,dirsync,nosuid,nodev,noexe ...
+</pre>
+<pre class="escaped">/dev/block/vold/179:1 /mnt/secure/asec vfat rw,dirsync,nosuid,nodev,noexec ...
+tmpfs /mnt/sdcard/.android_secure tmpfs ro,relatime,size=0k,mode=000 0 0
+$ ls -l /dev/block
+drwxr-xr-x root     root              2012-06-18 22:41 vold
+</pre>
+<pre style="background-color: yellow;" class="escaped">brw------- root     root     179,   2 2012-06-18 22:41 mmcblk0p2
+</pre>
+<pre class="escaped">brw------- root     root     179,   1 2012-06-18 22:41 mmcblk0p1
+drwxr-xr-x root     root              2012-06-18 22:41 platform
+brw------- root     root     179,   0 2012-06-18 22:41 mmcblk0
+brw------- root     root      31,   3 2012-06-18 22:41 mtdblock3
+brw------- root     root      31,   2 2012-06-18 22:41 mtdblock2
+brw------- root     root      31,   1 2012-06-18 22:41 mtdblock1
+brw------- root     root      31,   0 2012-06-18 22:41 mtdblock0
+</pre>
+<div class="vspace"></div></div>
+<p class="vspace">Ok, here on the Sony Ericsson Xperia Active we see the FAT partition <code>/mnt/sdcard</code> is device 179,1 hence the next partition must be 179,2 and it's named <code>mmcblk0p2</code>. Note that during our init, busybox creates the device node directly in <code>/dev</code> without the <code>/block/</code> directory Android uses.
+</p>
+<p class="vspace"><a name="init" id="init"></a>
+<code>/init</code> in your new initramfs
+</p><div class="frame"> 
+<pre class="escaped">#!/sbin/busybox sh
+
+# initramfs pre-boot init script
+
+# Mount the /proc and /sys filesystems
+/sbin/busybox mount -t proc none /proc
+/sbin/busybox mount -t sysfs none /sys
+/sbin/busybox mount -t tmpfs none /dev
+
+# Something (what?) needs a few cycles here
+/sbin/busybox sleep 1
+
+# Populate /dev
+/sbin/busybox mdev -s
+
+# Mount the root filesystem, second partition on micro SDcard
+</pre>
+<p><code>/sbin/busybox mount -t ext4 -o noatime,nodiratime,errors=panic /dev/</code><span style="background-color: yellow;"><code>mmcblk1p2</code></span> <code> /mnt/root</code>
+</p><pre class="escaped">
+# Clean up
+/sbin/busybox umount /proc
+/sbin/busybox umount /sys
+/sbin/busybox umount /dev
+
+# Transfer root to SDcard
+exec /sbin/busybox switch_root /mnt/root /etc/init
+</pre>
+</div>
+<div class="vspace"></div><ul><li><a class="urllink" href="http://busybox.net/downloads/binaries/latest/busybox-armv4tl">Precompiled busybox</a> from busybox.net
+</li></ul><p class="vspace">The file system of this initramfs is very minimalistic and only contains the <code>/sbin/busybox</code> and the mount points  <code>/proc, /sys, /dev</code> and <code>/mnt/root</code>. Or to be on the safe side, use the original initramfs and just add <code>/sbin/busybox</code>, a mount point <code>/mnt/root</code> and replace <code>init</code> with the script above.
+</p>
+<p class="vspace"><a name="base" id="base"></a>
+We'll need the systems base address, i.e. where the RAM begins. To get it from your original kernel <code>zImage</code>, check for <code>/proc/config.gz</code> in your running kernel or use the <code>extract-ikconfig</code> script on the kernel binary. This script is included in the kernel source.
+</p>
+<div class="vspace"></div><div class="frame"> 
+<pre class="escaped">$ extract-ikconfig zImage | grep PHYS_OFFSET
+CONFIG_PHYS_OFFSET=0x00200000
+</pre>
+</div>
+<p class="vspace">Looking for "System RAM" in <code>/proc/iomem</code> may also give you a clue of the base address.
+</p>
+<p class="vspace">Now we can create the new boot image.
+</p>
+<p class="vspace">At your desktop computer
+</p><div class="frame"> 
+<pre class="escaped"># mkdir my-initramfs
+# cd my-initramfs
+# mkdir -p proc sys dev mnt/root sbin
+# cp /my/arm/busybox sbin/busybox
+# cp /above/init init
+# chmod a+x init sbin/busybox
+# find . | cpio --quiet -H newc -o | gzip &gt; ../initramfs.cpio.gz
+# cd ..
+</pre>
+<p><code> # mkbootimg </code> <span style="background-color: yellow;"><code>--base 0x00200000</code></span><code> --kernel zImage --ramdisk initramfs.cpio.gz -o my-boot.img </code>
+</p></div>
+<p class="vspace">The kernel <code>zImage</code> is your original kernel. <code>mkbootimg</code> part of Android OS build but and can be found pre-compiled at various sites. You can download your original boot image from your device, from your vendor or from less official sources on the Internet, all depending on your type of phone and its openness. One feature of having a locked bootloader, is that if an image is flashable, it must be genuine (i.e. its signature verifies).  <a class="urllink" href="http://forum.xda-developers.com/">XDA Forum</a> is a good starting point, whatever method you chose.
+</p>
+<p class="vspace">If you prefer running a custom ROM (e.g. CyanogenMod), you can of course use its boot image instead of the device's original ROM.
+</p>
+<div class="vspace"></div><ul><li><a class="wikilink" href="http://whiteboard.ping.se/Android/Unmkbootimg">Utility to unpack the boot image</a> (gives you the base address as well)
+</li><li><a class="urllink" href="http://forum.xda-developers.com/">XDA Forums</a>
+</li><li><a class="urllink" href="http://android-dls.com/wiki/index.php?title=HOWTO:_Unpack%2C_Edit%2C_and_Re-Pack_Boot_Images">Howto Unpack, Edit, and Re-Pack Boot Images</a>
+</li><li><a class="urllink" href="https://gist.github.com/1087757">How to compile <code>mkbootimg</code></a>
+</li><li><a class="urllink" href="http://lyncd.com/2011/03/android-kernel-mkbootimg-base/">Finding the base address</a>
+</li></ul><p class="vspace">We sit on our newly created image <code>my-boot.img</code> for a while now, while finishing the rest. Do not flash it yet.
+</p>
+<div class="vspace"></div><h2>Creating the Debian root file system</h2>
+<p>Mount your SDcard, if not already mounted. I assume you've mounted it as <code>/mnt/debian</code>. If you prefer Ubuntu or some other Debian based distribution, the steps are the same. Replace the mirrors accordingly.
+</p>
+<p class="vspace">Chose a <a class="urllink" href="http://www.debian.org/mirror/list">Debian mirror</a> close to you, and begin to create the Debian root filesystem.
+</p>
+<p class="vspace">At your desktop computer
+</p><div class="frame"> 
+<pre class="escaped"># apt-get install debootstrap
+# mkdir /mnt/debian
+# mount -t ext4 /dev/sdf2 /mnt/debian
+# debootstrap --verbose --arch armel --foreign squeeze /mnt/debian http://ftp.se.debian.org/debian
+# umount /mnt/debian
+</pre>
+</div>
+<p class="vspace">This is only half of the Debian installation. Now we need to complete the other half. Either run this in an emulator (<code>qemu-system-arm</code> or <a class="urllink" href="http://developer.android.com/tools/devices/index.html">Android Virtual Device (AVD)</a>) or maybe easier, directly at your Android device as root. Here I'm using /root as a temporary mount point on the device since it happens to be unused in Android (actually, read-only).
+</p>
+<p class="vspace">On your Android device
+</p><div class="frame"> 
+<pre class="escaped"># mount /dev/block/mmcblk1p2 /root
+# export PATH=/sbin:/usr/sbin:/bin:/usr/bin:/system/bin
+# busybox chroot /root /debootstrap/debootstrap --second-stage
+# echo 'deb http://ftp.se.debian.org/debian squeeze main' &gt;/root/etc/apt/sources.list
+# mount -t proc none /root/proc
+# mount -t sysfs none /root/sys
+# mount -o bind /dev /root/dev
+# mount -t devpts none /root/dev/pts
+# export TMPDIR=/tmp
+# busybox chroot /root /bin/bash
+# apt-get update
+# apt-get install openssh-server
+# passwd root
+# exit
+# sync
+</pre>
+<p><em>Now shutdown your device and remove the SDcard.</em>
+</p></div>
+<p class="vspace">Here you'd actually ran Debian on your device! But chroot:ed below Android, we want the reverse. But now we got a complete GNU/Linux system with SSH server and all. Still some tinkering needs to be done.
+</p>
+<p class="vspace">Here below you find a ready-made root file system up to this point described, i.e. with a ssh-server installed. The root password is "root". Feel free to change it. ;-)
+</p>
+<div class="vspace"></div><ul><li><a class="urllink" href="http://whiteboard.ping.se/uploads/Android/root-debian-armel.tar.gz">Ready made root file system</a> (128MB)
+</li></ul><p class="vspace">Note that this file system is as of up to this point in this tutorial. It still needs work, e.g. installing your Android root in /android, adding the init scripts etc. This can't be pre-made, since they differs from device to device.
+</p>
+<div class="vspace"></div><h2>Creating the new Android root file system</h2>
+<p>Mount the SDcard in your ordinary GNU/Linux machine again.
+</p>
+<p class="vspace">Unpack the original boot image initramfs to /android on SDcard GNU/Linux partition. This is the new Android root. Create directory <code>/android/log</code>. Note that since the new Android root here isn't a mount point but a subdirectory, Android will not succeed re-mounting it as read-only. If you believe this is a problem, you can instead create the Android root on a separate partition on the SDcard, mounting it as <code>/mnt/root/android</code> in the <code>init</code> on the initramfs above directly after mounting <code>/mnt/root</code>. Note that in this case, /android/log may not be used for boot logs by <code>/etc/init</code> below, since it's read-only. You may solve this by mounting a tmpfs or simply remove the logging by <code>/etc/init</code>.
+</p>
+<p class="vspace">Android normally only accepts four partitions on the SDcard (vold limitation). If you don't want to waste one of them for the small root file system, you can loopback mount (--bind) /android to /mnt/android making it a mount point. This mount point you then can set to read-only using remount. Note that you must do a remount, because a bind-mount can not change the flags of the original file system initially. You'll have to do this remount explicit yourself in init.stage2 using /bin/mount in this case. But initially I suggest you just let the root be writeable until you get everything up and running. This can be done later -- or not at all.
+</p>
+<p class="vspace">Making a boot image is done with the Android OS build kit <code>mkbootimg</code>. There's no official tool splitting such an image, but it's quite trivial and lots of scripts available to do this. The image is basically just a concatenation of the kernel <code>zImage</code> and <code>initramfs.cpio.gz</code>.
+</p>
+<div class="vspace"></div><ul><li><a class="wikilink" href="http://whiteboard.ping.se/Android/Unmkbootimg">My utility to unpack the boot image</a>
+</li><li><a class="urllink" href="http://android-dls.com/wiki/index.php?title=HOWTO:_Unpack%2C_Edit%2C_and_Re-Pack_Boot_Images#Unpacking.2C_Editing.2C_and_Re-Packing_the_images">More info about unpacking an Android boot image</a>
+</li></ul><div class="vspace"></div><h2>Some finishing scripts to tie all together</h2>
+<p>Our new initramfs transfer init control to <code>/etc/init</code> on the GNU/Linux partition. Use this script below. You also need to copy the busybox to /sbin.
+</p>
+<p class="vspace"><code>/etc/init</code> of SDcard ext4 filesystem
+</p><div class="frame"> 
+<pre class="escaped">#!/sbin/busybox sh
+
+#
+# Debian environment boot init script
+#
+# Leave all the initialization process to the Android init to handle
+#
+
+# Launch delayed init script
+/etc/init.stage2 &gt;/android/log/boot.log 2&gt;&amp;1 &amp;
+
+# Transfer control to Android init - never returns
+exec /sbin/busybox chroot /android /init
+</pre>
+</div>
+<p class="vspace">Also make sure you copy the busybox to /sbin in this file system as well. Note that log from init.stage2 is stored in the Android file tree so you can access in from Android in case the Debian-level ssh server didn't start due to some mistake done in for example <code>/etc/rc.local</code>.
+</p>
+<p class="vspace">What this script does, is forking of a secondary delayed script the Debian environment executes once the Android init is done. It then transfers control to the Android original init, still running as pid 1 of course.
+</p>
+<p class="vspace">The secondary script <code>init.stage2</code>
+</p>
+<p class="vspace"><code>/etc/init.stage2</code> of the SDcard ext4 filesystem
+</p><div class="frame"> 
+<pre class="escaped">#!/sbin/busybox sh
+
+#
+# Delayed Debian environment boot init script
+# Not really init (not pid 1) but a fork of it.
+# The real init is right now executing in Android chroot
+#
+
+/sbin/busybox echo "`/sbin/busybox date` Debian init stage2 started"
+
+# Wait for Android init to set up everything
+# wait for dev to be mounted by Android init
+/sbin/busybox echo "`/sbin/busybox date` Waiting on Android to mount /dev"
+while [ ! -e /android/dev/.coldboot_done ]; do
+   /sbin/busybox sleep 1
+done
+# wait for Android init to signal all done
+/sbin/busybox echo "`/sbin/busybox date` Waiting on Android init to finish"
+while [ -e /android/dev/.booting ]; do
+   /sbin/busybox sleep 1
+done
+
+# Mount the /proc, /sys etc filesystems
+/sbin/busybox echo "`/sbin/busybox date` Mounting /proc /sys and /dev"
+/sbin/busybox mount -t proc none /proc
+/sbin/busybox mount -t sysfs none /sys
+
+# Mount /dev from the Android world
+/sbin/busybox mount -o bind /android/dev /dev
+/sbin/busybox mount -o bind /android/dev/pts /dev/pts
+/sbin/busybox mount -o bind /android/dev/socket /dev/socket
+
+# All done, now we can start stuff
+
+export PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+/sbin/busybox echo "`/sbin/busybox date` Running /etc/rc.local"
+
+# Start selected servers
+/etc/init.d/rc.local start
+
+/sbin/busybox echo "`/sbin/busybox date` All done"
+
+exit 0
+</pre>
+</div>
+<p class="vspace">Basically this only waits on Android init, then sets up everything nessesary for Debian such as devices, proc and sys mounts, and executes /etc/rc.local.
+</p>
+<p class="vspace">You see we mount /dev loopback from the Android root. Because of this, you must remove any devices in /dev populated by debootstrap, or else this mount will fail.
+</p>
+<p class="vspace">My <code>/etc/rc.local</code> looks like below.
+</p>
+<p class="vspace"><code>/etc/rc.local</code> of the SDcard ext4 filesystem
+</p><div class="frame"> 
+<pre class="escaped">#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+/etc/init.d/hostname.sh start
+/etc/init.d/ssh start
+
+exit 0
+</pre>
+</div>
+<p class="vspace">Note that init make sure everything here is logged to <code>/android/log/boot.log</code>. This is in the case the ssh-server does not start, you may see why in the file <code>/log/boot.log</code> by <code>adb shell</code> to Android.
+</p>
+<div class="vspace"></div><h2>Install it</h2>
+<p>If everything went well so far, it's time to install your customised boot image. Here below I assume you have an unlocked bootloader supporting <code>fastboot</code>, but you might have to use some other tool to flash your phone depending on model.
+</p>
+<p class="vspace">First enter fastboot mode on your Android device. This is done with some magic key combination during power off and is phone specific. You may try VolumeUp or VolumeDown as you either turn on the phone or connect its USB cord to the computer - or Google your phone model plus "fastboot".
+</p>
+<p class="vspace">On you desktop computer
+</p><div class="frame"> 
+<p><code># fastboot </code> <span style="background-color: yellow;"><code> -i 0x0fce</code></span> <code>flash boot my-boot.img</code> <br><code># fastboot </code> <span style="background-color: yellow;"><code> -i 0x0fce</code></span> <code>reboot</code>
+</p></div>
+<p class="vspace">The marked "<code>-i 0x0fc</code>" tells fastboot the vendor of the device to flash and you must change this matching your phone. You don't want to flash wrong Android device. If you are sure only the right one is connected (see with "<code>fastboot devices</code>") you may exclude this parameter.
+</p>
+<p class="vspace">All done, you now run Debian integrated with Android The Matrix Way. Run ssh to it as user <code>root</code> with the password you specified.
+</p>
+<div class="vspace"></div><h2>Additional tinkering</h2>
+<h3>/etc/group</h3>
+<p>The Android environment is quite restricted. If you plan to run as non-root in the Debian environment, you'll need to add yourself to some Android groups to get access to network and such. The groups of the Android user <code>shell</code>  serves as a template. Most important are the inet group 3003 to get network access and 1015 to write on the SDcard.
+</p>
+<p class="vspace">On an android device as user <code>shell</code>
+</p><div class="frame"> 
+<pre class="escaped">shell@android:/ $ id
+uid=2000(shell) gid=2000(shell) groups=1003(graphics),1004(input),1007(log),1009(mount),
+  1011(adb),1015(sdcard_rw),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats)
+</pre>
+</div>
+<p class="vspace">The complete set of Android user uid and group gid can by found in <a class="urllink" href="http://www.netmite.com/android/mydroid/system/core/include/private/android_filesystem_config.h">system/core/include/private/android_filesystem_config.h</a> (yes, it's hard-coded).
+</p>
+<div class="vspace"></div><h3>/etc/mtab</h3>
+<p>To make df happy, make this a symlink to /proc/mounts
+</p>
+<div class="vspace"></div><div class="frame" style="width: 300px;"> 
+<p><code># ln -s /proc/mounts /etc/mtab</code>
+</p></div>
+<p class="vspace">Still, df will produce a somewhat confusing output due to the double mounts of devices in the different roots. Not to worry, this is only cosmetic.
+</p>
+<div class="vspace"></div><h3>locales</h3>
+<p>You don't get any localised locale installed by default. If you'd like that, <code>apt-get install locales</code>, edit <code>/etc/locale.gen</code> to select what locale you'd like, then run <code>locale-gen</code>.
+</p>
+<div class="vspace"></div><h3>Setting the system default time zone</h3>
+<div class="frame" style="width: 250px;"> 
+<pre class="escaped"># dpkg-reconfigure tzdata
+</pre>
+</div>
+<div class="vspace"></div><h2>Using the GNU/Linux Debian environment</h2>
+<h3>Connectivity</h3>
+<p>To get a Debian terminal, download the <a class="urllink" href="https://play.google.com/store/apps/details?id=org.connectbot">ConnectBot</a> from Google Play and ssh-connect to localhost. Note that if you use the "local" connection in ConnectBot, you'll enter The Matrix, i.e. the chroot Android environment, and can see no signs of the Debian environment whatsoever.
+</p>
+<div class="vspace"></div>
+<table padding="5px"><tbody><tr><td valign="top">
+<p>Connect using SSH to localhost
+</p><div><img src="./How to run Debian or Ubuntu GNU Linux on your Android_files/connectbot.png" alt="" title=""></div>
+</td><td width="10px" valign="top">
+</td><td valign="top">
+<p>Connect using local connection
+</p><div><img src="./How to run Debian or Ubuntu GNU Linux on your Android_files/connectbot2.png" alt="" title=""></div>
+</td></tr></tbody></table>
+<div class="vspace"></div><h3>X11 Windows</h3>
+<p>If you want to run X11 on your device, apt-get tightvncserver and get the free android app <a class="urllink" href="https://play.google.com/store/apps/details?id=android.androidVNC&hl=sv">android-vnc-viewer</a> from Google Play.
+</p>
+<p class="vspace">First apt-get some desktop environment. You can use <code>gnome-desktop-environment</code> if you got the hardware for it, but for smaller systems I'd recommend <a class="urllink" href="http://wiki.lxde.org/en/Main_Page">lxde</a> instead. Both are included in the Debian ARM distribution.
+</p>
+<p class="vspace">On your Android device in the Debian system via SSH
+</p><div class="frame"> 
+<pre class="escaped">$ sudo apt-get install tightvncserver
+$ vncserver -geometry 1280x752 -display :1
+</pre>
+</div>
+<p class="vspace">Running Debian GNU/Linux with Gnome on Android using the android-vnc-viewer app
+</p><div><a class="urllink" href="http://whiteboard.ping.se/uploads/Android/android-debian.png"><img src="./How to run Debian or Ubuntu GNU Linux on your Android_files/android-debian-small.png" alt="ASUS Transformer TF101 running Debian GNU/Linux with Gnome desktop environment" title="ASUS Transformer TF101 running Debian GNU/Linux with Gnome desktop environment"></a></div>
+<p><span style="font-size:83%">(click to enlarge)</span>
+</p>
+<p class="vspace">For better ergonomics, run ssh (optionally with X11 forwarding) from your favourite computer. Running the mouse pointer with the index finger over the touch screen, can be somewhat challenging. :-) Still, Gnome on the ASUS Transformer TF101 runs surprisingly well.
+</p>
+<div class="vspace"></div><h3>File access</h3>
+<p>One of the reasons motivating me to implement this is the ability to access the Android files without have to unmount/remount the SDcard.
+</p>
+<p class="vspace">In Gnome (Nautilus) at my workstation
+</p><div><img src="./How to run Debian or Ubuntu GNU Linux on your Android_files/sftp-android.png" alt="" title=""></div>
+<p class="vspace">As a user in the <code>sdcard_rw</code> group you have full access to the SDcard and as the <code>root</code> user all the files in the filesystem. This also makes backups easy. My devices are backuped nightly via <a class="urllink" href="http://backuppc.sourceforge.net/">BackupPC</a> running tar over ssh.
+</p>
+<p class="vspace">The Android Media Scanner normally runs automatically each time Android remounts the SDcard. Since you are now transferring the media to the SDcard using ssh/sftp, not remounting the card, the media scanner won't run except for at boot. Download an app to start the Media Scanner manually from Google Play if you need - there are lots of them.
+</p>
+<div class="vspace"></div><ul><li> <a target="_blank" class="urllink" href="https://play.google.com/store/search?q=media+scanner&c=apps">Search Google Play for Media Scanners</a>
+</li></ul><p class="vspace">The Media Scanner is an index service used to catalogue media files such as MP3's and images for Android apps. If you transfer a media file using ssh/sftp but can't find it in your app, initiate a Media Scan.
+</p>
+<p class="vspace"><a name="appspace" id="appspace"></a>
+</p><h3>Modifying the system</h3>
+<p>With the real GNU/Linux distribution on top, it's trivial to customize the device to your likings. For example the Sony Xperia Active only got 420MB internal storage for apps and data. This we'll change simply by moving /data from the internal partition to a new partition we create on the SDcard. Create the partition, copy /data to it, edit Androids <code>init.rc</code> (or <code>init.vendor.rc</code>) to mount the new one instead, and then restart. All done, no need to re-flash the device or anything.
+</p>
+<div class="vspace"></div>
+<table padding="5px"><tbody><tr><td valign="top">
+<p>Before
+</p><div><img src="./How to run Debian or Ubuntu GNU Linux on your Android_files/beforedata.png" alt="" title=""></div>
+</td><td width="10px" valign="top">
+</td><td valign="top">
+<p>After
+</p><div><img src="./How to run Debian or Ubuntu GNU Linux on your Android_files/afterdata.png" alt="" title=""></div>
+</td></tr></tbody></table>
+<p class="vspace">Total space from 420MB to 4.66GB - not bad at all. Just keep in mind Androids vold does not like more than four partitions on the SDcard by default.
+</p>
+<div class="vspace"></div><h3>Rooted</h3>
+<p>Please  note that this way, the Android environment is <strong>not</strong> "rooted". This is trivial to achieve, but very much less needed, unless you have some app needing root privileges you still need to use. Myself I find giving away root privileges to apps far too dangerous.
+</p>
+<p class="vspace">To enter the Android Matrix from the Debian world, use chroot.
+</p>
+<div class="vspace"></div><pre class="escaped">root@tf101:/home/kuisma# PATH=/system/bin /usr/sbin/chroot /android sh
+root@android:/ #
+</pre>
+<p class="vspace">This is seldom needed, since you'll perform all the work (e.g. edits) of the Android file system directly from the Debian environment, using the full set of tools GNU/Linux provides you. 
+</p>
+<p class="vspace">Happy hacking!
+</p>
+<div class="vspace"></div><h2>Caveats</h2>
+<h3>Environment variables and file descriptors</h3>
+<p>When ssh:ing into the device, remember that neither the ssh server nor your login shell is a child of Android's init. Therefore you've got no access to neither file descriptors nor environment variables created by init, especially not ANDROID_PROPERTY_WORKSPACE with corresponding file descriptor. Because of this, you can't use getprop/setprop or any command relying Android properties from the ssh session (e.g. restart adbd). To do this, you must enter the Android world via a child of init, e.g. adbd or a local ssh-server in the Android root (e.g. dropbear).
+</p>
+<p class="vspace">You can always enter the Android world only to adb shell back to itself.
+</p>
+<div class="vspace"></div><pre class="escaped">root@tf101:/home/kuisma# chroot /android /system/bin/adb shell
+shell@android:/ $ 
+</pre>
+<p class="vspace">Note that this device is not rooted (ro.secure is 1), hence me ending up as the <code>shell</code> user.
+</p>
+<div class="vspace"></div><h3>apt-get upgrade</h3>
+<p>Running apt-get upgrade, many installations scripts restarts their corresponding daemons. Since no daemons except for them you start in rc.local are supposed to be running in the Debian environment, it might be a good idea to restart the system after the upgrade.
+</p>
+<div class="vspace"></div><h2>Some warnings</h2>
+<p>Although Debian is the root, both systems are heavily dependent on the Android system and its init, since it is the "owner" of the hardware (i.e. runs init). If Android init fails, you will not be able to ssh into the Debian machine. Even if the root is transferred to the SDcard, the Android init mounts internal partitions, /system most important. If you do some change on this partition, you might lock yourself out. This can be solved by a backup copy of the Android environment so you can restore it to the SDcard and edit /android/init.*.rc to not mount /system from internal flash but use the one you restored to the SDcard instead. Running /system from the SDcard to begin with may be a good idea if you plan to change it frequently. This way the original system partition can be left untouched. This of course goes for all the Android partitions. Use can easy increase the size for your apps by changing /data to a partition on the SDcard of whatever size you like.
+</p>
+<p class="vspace">Or to conclude, always keep a backup.
+</p>
+<p class="vspace">Of course you can implement some fail-safe in the init scripts, populating /dev, mounting /proc, /sys, setting IP address etc if the Android init fails, but I find it more practical to run /system from SDcard instead.
+</p>
+<p class="vspace">The Android Java machine (Dalvik) on the other hand is quite non-critical at the operating system level, so removing bundled apps (bloatware) on the /data partition is quite harmless. If you happen to remove e.g. the Home Application, you'll still be able to ssh into the Debian system restoring it from your backup.
+</p>
+<div class="vspace"></div><h2>Common mistakes</h2>
+<ul><li>Make sure you set execute permissions for busybox, init scripts etc.
+</li><li>Make sure all mount points are there.
+</li><li>Make sure <code>/dev</code> is a mount point and not populated with device nodes.
+</li></ul><div class="vspace"></div><h2>About Performance</h2>
+<p>Note that this is not emulation or virtualization but a runtime environment. Because of this no performance penalty whatsoever occur in neither the Android nor the Debian environment, not counting the extra one and a half second to boot the device.
+</p>
+<p class="vspace">If moving partitions (eg. /system and/or /data) to the SDcard for safety or to increase the size, the speed of the SDcard may affect the performance. My benchmarks shows that a class 10 card gives about the same I/O performance as the internal nand disk, though. Don't except more than 15-20 MB/s. USB disks may give you more.
+</p>
+<p class="vspace">Don't expect laptop performance, though. If it's primarily a GNU/Linux workstation you want, get an x86 based machine instead. The Android platform is design with resource conservation in mind, not high performance.
+</p>
+<div class="vspace"></div><h2>pstree</h2>
+<p>A typical ps tree showing the process hierarchy. Note the sshd running this pstree and a sftp server in the Debian root. All the other processes are chroot:ed to the Android root.
+</p>
+<div class="vspace"></div><pre class="escaped">init─┬─adbd───{adbd}
+     ├─dbus-daemon
+     ├─debuggerd
+     ├─dhcpcd
+     ├─drmserver───{drmserver}
+     ├─dropbear
+     ├─glgps
+     ├─installd
+     ├─keystore
+     ├─mediaserver───6*[{mediaserver}]
+     ├─netd───4*[{netd}]
+     ├─sdcard
+     ├─servicemanager
+     ├─sshd─┬─sshd───sshd───sftp-server
+     │      └─sshd───sshd───bash───pstree
+     ├─surfaceflinger───5*[{surfaceflinger}]
+     ├─ueventd
+     ├─vold───2*[{vold}]
+     ├─wpa_supplicant2
+     └─zygote─┬─LocationService───18*[{LocationServic}]
+              ├─android.browser───14*[{android.browse}]
+              ├─android.vending───26*[{android.vendin}]
+              ├─com.asus.cm───9*[{com.asus.cm}]
+              ├─d.process.acore───8*[{d.process.acor}]
+              ├─d.process.media───9*[{d.process.medi}]
+              ├─droid.apps.maps───31*[{droid.apps.map}]
+              ├─droid.gallery3d───9*[{droid.gallery3}]
+              ├─droid.gsf.login───11*[{droid.gsf.logi}]
+              ├─e.process.gapps───35*[{e.process.gapp}]
+              ├─ing.android.tsm───16*[{ing.android.ts}]
+              ├─m.android.phone───16*[{m.android.phon}]
+              ├─m.asus.keyboard───8*[{m.asus.keyboar}]
+              ├─ndroid.launcher───15*[{ndroid.launche}]
+              ├─ndroid.settings───16*[{ndroid.setting}]
+              ├─ndroid.systemui───11*[{ndroid.systemu}]
+              ├─oid.hostmonitor───8*[{oid.hostmonito}]
+              ├─onFriendService───11*[{onFriendServic}]
+              ├─putmethod.latin───9*[{putmethod.lati}]
+              ├─s:FriendService───8*[{s:FriendServic}]
+              ├─system_server───67*[{system_server}]
+              ├─uance.xt9.input───12*[{uance.xt9.inpu}]
+              └─3*[{zygote}]
+</pre>
+<p class="vspace">Realize there's no connection between the process tree and the chroot file system structure. Here the <code>init</code> process lives in the chroot environment despite of being top of the process tree, and the ssh server <code>sshd</code> in the genuine top root, despite of being below <code>init</code> in the process tree.
+</p>
+<div class="vspace"></div><h2>Devices verified</h2>
+<p>Implemented successfully on the following Android devices.
+</p>
+<div class="vspace"></div><ul><li>Sony Ericsson Xperia Active ST17
+</li><li>ASUS Transformer TF101
+</li><li>HTC Desire
+</li><li> <a target="_blank" class="urllink" href="http://forum.xda-developers.com/showpost.php?p=31267021&postcount=7">Samsung Galaxy S II (SGH-T989)</a> (requires custom <code>mkbootimg</code>, see link)
+</li><li>Hisense E860
+</li></ul><p class="vspace">Got it up on some other device? Send me a mail and I'll add it to this list.
+</p>
+<div class="vspace"></div><h2>Feedback? Questions? Suggestions?</h2>
+<p>This tutorial too basic? Too complicated? Please feel free to send me a mail!
+</p>
+<p class="vspace">/By <a class="urllink" href="mailto:kuisma@ping.se">Mikael Q Kuisma</a>
+</p>
+</div>
+  </td>
+<!--PageRightFmt-->
+  <td id="blogright" valign="top">
+   <form action="http://whiteboard.ping.se/">
+    <input type="hidden" name="n" value="Android.Debian">
+    <input type="hidden" name="action" value="search">
+    <input type="text" name="q" value=" Search " class="inputbox searchbox" onfocus="if(this.value=&#39; Search &#39;) {this.value=&#39;&#39;}" onblur="if(this.value==&#39;&#39;) {this.value=&#39; Search &#39;}"><input type="submit" class="inputbutton searchbutton" value="Go"></form>
+<p class="sidehead"> <a class="wikilink" href="http://whiteboard.ping.se/Main/HomePage">Home</a>
+</p><ul><li><a class="wikilink" href="http://whiteboard.ping.se/Linux/Linux">GNU/Linux</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/Android/Android">Android</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/HackValue/HackValue">HackValue</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/Networking/Networking">Networking</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/Security/Security">Security</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/Propeller/Propeller">Propeller</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/MachineLearning/MachineLearning">Machine learning</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/SDR/SDR">SDR Radio</a>
+</li><li><a class="urllink" href="http://whisper.ping.se/">Whisper</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/InSwedish/InSwedish">InSwedish</a>
+</li></ul><p class="vspace sidehead"> <a class="urllink" href="http://www.ping.se/">Ping site</a>
+</p><ul><li><a class="urllink" href="http://www.ping.se/ASDIC/Overview">ASDIC</a>
+</li></ul><p class="vspace"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</p>
+<div class="vspace"></div>
+
+  </td>
+<!--/PageRightFmt-->
+</tr></tbody></table>
+<!--PageFooterFmt-->
+<table id="blogfoot" cellspacing="0" cellpadding="0" align="center"><tbody><tr>
+  <td class="lastmod">Page last modified 2013-09-10 10:47Z</td>
+  <td class="footnav"><div style="text-align: right;"> 
+<p><a rel="nofollow" class="wikilink" href="http://whiteboard.ping.se/Android/Debian#">^</a>
+</p></div>
+  </td>
+</tr></tbody></table>
+<!--/PageFooterFmt-->
+<!-- Start of StatCounter Code -->
+<script type="text/javascript">
+var sc_project=4180083; 
+var sc_invisible=1; 
+var sc_partition=48; 
+var sc_click_stat=1; 
+var sc_security="42cbc20c"; 
+</script>
+
+<script type="text/javascript" src="./How to run Debian or Ubuntu GNU Linux on your Android_files/counter.js"></script><noscript>&lt;div class="statcounter"&gt;&lt;a title="hit counter" href="http://www.statcounter.com/" target="_blank"&gt;&lt;img class="statcounter" src="http://c.statcounter.com/4180083/0/42cbc20c/1/" alt="hit counter" &gt;&lt;/a&gt;&lt;/div&gt;</noscript>
+<!-- End of StatCounter Code -->
+
+
+</body></html>

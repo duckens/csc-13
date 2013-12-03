@@ -1,0 +1,72 @@
+
+
+app_122@android:/ # mount                                                      
+rootfs / rootfs ro,relatime 0 0
+tmpfs /dev tmpfs rw,nosuid,relatime,mode=755 0 0
+devpts /dev/pts devpts rw,relatime,mode=600 0 0
+proc /proc proc rw,relatime 0 0
+sysfs /sys sysfs rw,relatime 0 0
+none /acct cgroup rw,relatime,cpuacct 0 0
+tmpfs /mnt/asec tmpfs rw,relatime,mode=755,gid=1000 0 0
+tmpfs /mnt/obb tmpfs rw,relatime,mode=755,gid=1000 0 0
+none /dev/cpuctl cgroup rw,relatime,cpu 0 0
+/dev/block/mmcblk0p9 /system ext4 rw,noatime,barrier=1,data=ordered 0 0
+/dev/block/mmcblk0p7 /cache ext4 rw,nosuid,nodev,noatime,barrier=1,data=ordered 0 0
+/dev/block/mmcblk0p1 /efs ext4 rw,nosuid,nodev,noatime,barrier=1,data=ordered 0 0
+/dev/block/mmcblk0p10 /data ext4 rw,nosuid,nodev,noatime,barrier=1,data=ordered,noauto_da_alloc 0 0
+/dev/block/mmcblk0p4 /mnt/.lfs j4fs rw,relatime 0 0
+/sys/kernel/debug /sys/kernel/debug debugfs rw,relatime 0 0
+/dev/block/vold/259:3 /mnt/sdcard vfat rw,dirsync,nosuid,nodev,noexec,noatime,nodiratime,uid=1000,gid=1015,fmask=0002,dmask=0002,allow_utime=0020,codepage=cp437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro 0 0
+tmpfs /mnt/sdcard/external_sd tmpfs rw,dirsync,nosuid,nodev,noexec,noatime,nodiratime,size=0k,mode=755,gid=1000 0 0
+tmpfs /mnt/sdcard/usbStorage tmpfs rw,dirsync,nosuid,nodev,noexec,noatime,nodiratime,size=0k,mode=755,gid=1000 0 0
+/dev/block/vold/179:25 /mnt/sdcard/external_sd vfat rw,dirsync,nosuid,nodev,noexec,noatime,nodiratime,uid=1000,gid=1023,fmask=0002,dmask=0002,allow_utime=0020,codepage=cp437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro 0 0
+/dev/block/vold/179:25 /mnt/secure/asec vfat rw,dirsync,nosuid,nodev,noexec,noatime,nodiratime,uid=1000,gid=1023,fmask=0002,dmask=0002,allow_utime=0020,codepage=cp437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro 0 0
+tmpfs /mnt/sdcard/external_sd/.android_secure tmpfs ro,relatime,size=0k,mode=000 0 0
+
+
+
+app_122@android:/ # ls /dev/block/ -l                                          
+brw------- root     root       7,   0 2013-12-03 11:42 loop0
+brw------- root     root       7,   1 2013-12-03 11:42 loop1
+brw------- root     root       7,   2 2013-12-03 11:42 loop2
+brw------- root     root       7,   3 2013-12-03 11:42 loop3
+brw------- root     root       7,   4 2013-12-03 11:42 loop4
+brw------- root     root       7,   5 2013-12-03 11:42 loop5
+brw------- root     root       7,   6 2013-12-03 11:42 loop6
+brw------- root     root       7,   7 2013-12-03 11:42 loop7
+brw------- root     root     179,   0 2013-12-03 11:42 mmcblk0
+brw------- root     root     179,   8 2013-12-03 11:42 mmcblk0boot0
+brw------- root     root     179,  16 2013-12-03 11:42 mmcblk0boot1
+brw------- root     root     179,   1 2013-12-03 11:42 mmcblk0p1
+brw------- root     root     259,   2 2013-12-03 11:42 mmcblk0p10
+brw------- root     root     259,   3 2013-12-03 11:42 mmcblk0p11
+brw------- root     root     259,   4 2013-12-03 11:42 mmcblk0p12
+brw------- root     root     179,   2 2013-12-03 11:42 mmcblk0p2
+brw------- root     root     179,   3 2013-12-03 11:42 mmcblk0p3
+brw------- root     root     179,   4 2013-12-03 11:42 mmcblk0p4
+brw------- root     root     179,   5 2013-12-03 11:42 mmcblk0p5
+brw------- root     root     179,   6 2013-12-03 11:42 mmcblk0p6
+brw------- root     root     179,   7 2013-12-03 11:42 mmcblk0p7
+brw-rw---- system   radio    259,   0 2013-12-03 11:42 mmcblk0p8
+brw------- root     root     259,   1 2013-12-03 11:42 mmcblk0p9
+brw------- root     root     179,  24 2013-12-03 11:42 mmcblk1
+brw------- root     root     179,  25 2013-12-03 11:42 mmcblk1p1
+brw------- root     root     179,  26 2013-12-03 11:42 mmcblk1p2
+drwxr-xr-x root     root              2013-12-03 11:42 platform
+brw------- root     root       1,   0 2013-12-03 11:42 ram0
+brw------- root     root       1,   1 2013-12-03 11:42 ram1
+brw------- root     root       1,  10 2013-12-03 11:42 ram10
+brw------- root     root       1,  11 2013-12-03 11:42 ram11
+brw------- root     root       1,  12 2013-12-03 11:42 ram12
+brw------- root     root       1,  13 2013-12-03 11:42 ram13
+brw------- root     root       1,  14 2013-12-03 11:42 ram14
+brw------- root     root       1,  15 2013-12-03 11:42 ram15
+brw------- root     root       1,   2 2013-12-03 11:42 ram2
+brw------- root     root       1,   3 2013-12-03 11:42 ram3
+brw------- root     root       1,   4 2013-12-03 11:42 ram4
+brw------- root     root       1,   5 2013-12-03 11:42 ram5
+brw------- root     root       1,   6 2013-12-03 11:42 ram6
+brw------- root     root       1,   7 2013-12-03 11:42 ram7
+brw------- root     root       1,   8 2013-12-03 11:42 ram8
+brw------- root     root       1,   9 2013-12-03 11:42 ram9
+drwxr-xr-x root     root              2013-12-03 11:42 vold

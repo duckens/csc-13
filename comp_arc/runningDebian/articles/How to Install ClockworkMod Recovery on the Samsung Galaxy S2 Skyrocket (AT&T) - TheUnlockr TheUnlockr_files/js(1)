@@ -1,0 +1,62 @@
+var mm_ri = String( Math.random() );
+mm_ri = mm_ri.replace( /0\./g,'' );
+
+var mm_protocol = location.protocol;
+if ( mm_protocol != 'http:' && mm_protocol != 'https:' ){ mm_protocol = 'http:'; }
+
+
+var sync_4815162342 = function()
+{
+this.urls = [
+"http://pixel.mathtag.com/misc/img?mt_id=0&mt_adid=0&mop_seq=0:5&mt_cb=554528&mop_top=",
+"http://delivery.swid.switchads.com/adserver/info.php?action=STORE&info=MMTH:f261526f-6dc8-4400-8e3f-768c911889f1",
+"http://pixel.mathtag.com/misc/img?mt_id=0&mt_adid=0&mop_seq=1:5&mt_cb=425314&mop_top=29:1386058259|",
+"http://ums.adtechus.com/mapuser?providerid=1005;userid=f261526f-6dc8-4400-8e3f-768c911889f1",
+"http://pixel.mathtag.com/misc/img?mt_id=0&mt_adid=0&mop_seq=2:5&mt_cb=616030&mop_top=29:1386058259|21:1386058259|",
+"http://pix.btrll.com/353806.png",
+"http://sync.adap.tv/sync?type=gif&key=mediamathinc&uid=f261526f-6dc8-4400-8e3f-768c911889f1",
+"http://y.one.impact-ad.jp/cs?d=70&uid=f261526f-6dc8-4400-8e3f-768c911889f1&tg=2&et=30&r=no",
+"http://pixel.mathtag.com/misc/img?mt_id=0&mt_adid=0&mop_seq=5:5&mt_cb=429171&check=f261526f-6dc8-4400-8e3f-768c911889f1&mop_top=29:1386058259|21:1386058259|32:1386058259|31:1386058259|35:1386058259|",
+]
+
+   this.progress = 0;
+
+   var self = this;
+
+   this.sync = function(url)
+   {
+      var e = new Image();
+      e.src = url;
+   }
+
+   this.batch = function()
+   {
+      for (var i = self.progress; i < self.urls.length; ++i)
+      {
+          self.sync(self.urls[i]);
+      }
+   }
+
+   this.final = function()
+   {
+      self.sync(self.urls[self.urls.length-1]+"&final");
+   }
+
+   this.some = function(howmany)
+   {
+      var count = 0;
+      for (var i = self.progress; i < self.urls.length && count < howmany; ++i)
+      {
+         self.sync(self.urls[self.progress++]);
+         count++;
+      }
+   }
+}
+
+
+var s_4815162342 = new sync_4815162342();
+s_4815162342.some(1);
+setTimeout('s_4815162342.some(2)', 1000);
+setTimeout(s_4815162342.batch, 3000);
+setTimeout(s_4815162342.final, 10000);
+
