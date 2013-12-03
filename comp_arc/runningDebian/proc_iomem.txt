@@ -1,0 +1,107 @@
+app_122@android:/proc # cat ./iomem                                            
+03830000-038300ff : samsung-i2s.0
+  03830000-038300ff : samsung-i2s
+10060000-10060fff : s3c2410-wdt
+10070000-100700ff : s3c64xx-rtc
+  10070000-100700ff : s3c64xx-rtc
+100b0000-100b0fff : s5p-tvout-cec
+100c0000-100cfffe : s5p-tmu
+  100c0000-100cfffe : s5p-tmu
+11800000-11800fff : s3c-fimc.0
+  11800000-11800fff : s3c-fimc
+11810000-11810fff : s3c-fimc.1
+  11810000-11810fff : s3c-fimc
+11820000-11820fff : s3c-fimc.2
+  11820000-11820fff : s3c-fimc
+11830000-11830fff : s3c-fimc.3
+  11830000-11830fff : s3c-fimc
+11840000-1184ffff : s5p-jpeg
+  11840000-1184ffff : s5p-jpeg
+11880000-11883fff : s3c-csis.0
+  11880000-11883fff : s3c-csis
+11890000-11893fff : s3c-csis.1
+  11890000-11893fff : s3c-csis
+11a20000-11a20fff : s5p-sysmmu.1
+  11a20000-11a20fff : s5p-sysmmu.1
+11a30000-11a30fff : s5p-sysmmu.2
+  11a30000-11a30fff : s5p-sysmmu.2
+11a40000-11a40fff : s5p-sysmmu.3
+  11a40000-11a40fff : s5p-sysmmu.3
+11a50000-11a50fff : s5p-sysmmu.4
+  11a50000-11a50fff : s5p-sysmmu.4
+11c00000-11c07fff : s3cfb.0
+  11c00000-11c07fff : s3cfb
+11c40000-11c47fff : ielcd
+11ca0000-11ca0fff : mdnie
+12480000-12480fff : s3c_otghcd
+  12480000-12480fff : s3c-usbgadget
+    12480000-12480fff : s3c-usbgadget
+12530000-12530fff : s3c-sdhci.2
+  12530000-12530fff : mmc1
+12540000-12540fff : s3c-sdhci.3
+  12540000-12540fff : mmc2
+12550000-12550fff : dw_mmc
+  12550000-12550fff : mmc0
+12580000-125800ff : s5p-ehci
+12680000-12681000 : s3c-pl330.1
+  12680000-12681000 : s3c-pl330
+12690000-12691000 : s3c-pl330.2
+  12690000-12691000 : s3c-pl330
+12800000-12800fff : s5p-fimg2d
+  12800000-12800fff : s5p-fimg2d
+12850000-12851000 : s3c-pl330.0
+  12850000-12851000 : s3c-pl330
+12a20000-12a20fff : s5p-sysmmu.9
+  12a20000-12a20fff : s5p-sysmmu.9
+12c00000-12c0ffff : s5p-vp
+  12c00000-12c0ffff : s5p-vp
+12c10000-12c1ffff : s5p-mixer
+  12c10000-12c1ffff : s5p-mixer
+12c20000-12c2ffff : s5p-sdo
+12d00000-12dfffff : s5p-hdmi
+  12d00000-12dfffff : s5p-hdmi
+12e20000-12e20fff : s5p-sysmmu.12
+  12e20000-12e20fff : s5p-sysmmu.12
+13000000-13000097 : Mali-400 GP
+13001000-1300102f : Mali-400 L2 cache
+13003000-13003023 : Mali-400 MMU for GP
+13004000-13004023 : Mali-400 MMU for PP 0
+13005000-13005023 : Mali-400 MMU for PP 1
+13006000-13006023 : Mali-400 MMU for PP 2
+13007000-13007023 : Mali-400 MMU for PP 3
+13008000-130090ef : Mali-400 PP 0
+1300a000-1300b0ef : Mali-400 PP 1
+1300c000-1300d0ef : Mali-400 PP 2
+1300e000-1300f0ef : Mali-400 PP 3
+13400000-1340ffff : s3c-mfc
+  13400000-1340ffff : s3c-mfc
+13620000-13620fff : s5p-sysmmu.13
+  13620000-13620fff : s5p-sysmmu.13
+13630000-13630fff : s5p-sysmmu.14
+  13630000-13630fff : s5p-sysmmu.14
+13800000-138000ff : s5pv210-uart.0
+  13800000-138000ff : s5pv210-uart
+13810000-138100ff : s5pv210-uart.1
+  13810000-138100ff : s5pv210-uart
+13820000-138200ff : s5pv210-uart.2
+  13820000-138200ff : s5pv210-uart
+13830000-138300ff : s5pv210-uart.3
+  13830000-138300ff : s5pv210-uart
+13860000-13860fff : s3c2440-i2c.0
+  13860000-13860fff : s3c2440-i2c
+13870000-13870fff : s3c2440-i2c.1
+  13870000-13870fff : s3c2440-i2c
+13890000-13890fff : s3c2440-i2c.3
+  13890000-13890fff : s3c2440-i2c
+138b0000-138b0fff : s3c2440-i2c.5
+  138b0000-138b0fff : s3c2440-i2c
+138c0000-138c0fff : s3c2440-i2c.6
+  138c0000-138c0fff : s3c2440-i2c
+138d0000-138d0fff : s3c2440-i2c.7
+  138d0000-138d0fff : s3c2440-i2c
+138e0000-138e03ff : s5p-i2c-hdmi-phy
+  138e0000-138e03ff : s5p-i2c-hdmi-phy
+13910000-13911fff : s5pv210-adc
+40000000-7fffffff : System RAM
+  4022d000-408e4fff : Kernel text
+  408e6000-40cf870f : Kernel data
