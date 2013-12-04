@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0045)http://whiteboard.ping.se/Android/Unmkbootimg -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>unmkbootimg - reverse mkbootimg utility </title>
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <link rel="stylesheet" href="./unmkbootimg - reverse mkbootimg utility_files/blog.css" type="text/css">
+  <link rel="icon" href="http://whiteboard.ping.se/pub/skins/blog/blogicon.gif" type="image/gif">
+  <link rel="SHORTCUT ICON" href="http://whiteboard.ping.se/pub/skins/blog/blogicon.gif">
+  <!--HeaderText--><style type="text/css"><!--
+  ul, ol, pre, dl, p { margin-top:0px; margin-bottom:0px; }
+  code.escaped { white-space: nowrap; }
+  .vspace { margin-top:1.33em; }
+  .indent { margin-left:40px; }
+  .outdent { margin-left:40px; text-indent:-40px; }
+  a.createlinktext { text-decoration:none; border-bottom:1px dotted gray; }
+  a.createlink { text-decoration:none; position:relative; top:-0.5em;
+    font-weight:bold; font-size:smaller; border-bottom:none; }
+  img { border:0px; }
+  
+div.eqn { margin: 0 2em; }
+div.eqn table { width: 100%; }
+div.eqn iframe {
+ width: 100%;
+ height: 80px;
+}.editconflict { color:green; 
+  font-style:italic; margin-top:1.33em; margin-bottom:1.33em; }
+
+  table.markup { border:2px dotted #ccf; width:90%; }
+  td.markup1, td.markup2 { padding-left:10px; padding-right:10px; }
+  table.vert td.markup1 { border-bottom:1px solid #ccf; }
+  table.horiz td.markup1 { width:23em; border-right:1px solid #ccf; }
+  table.markup caption { text-align:left; }
+  div.faq p, div.faq pre { margin-left:2em; }
+  div.faq p.question { margin:1em 0 0.75em 0; font-weight:bold; }
+  div.faqtoc div.faq * { display:none; }
+  div.faqtoc div.faq p.question 
+    { display:block; font-weight:normal; margin:0.5em 0 0.5em 20px; line-height:normal; }
+  div.faqtoc div.faq p.question * { display:inline; }
+   
+    .frame 
+      { border:1px solid #cccccc; padding:4px; background-color:#f9f9f9; }
+    .lfloat { float:left; margin-right:0.5em; }
+    .rfloat { float:right; margin-left:0.5em; }
+a.varlink { text-decoration:none; }
+
+--></style>  <meta name="robots" content="index,follow">
+  <link rel="stylesheet" href="./unmkbootimg - reverse mkbootimg utility_files/blog2.css" type="text/css"><meta name="description" content="Extract kernel and initramfs root file system from Android boot image">
+
+</head>
+<body>
+<!--PageHeaderFmt-->
+<table id="bloghead" cellspacing="0" cellpadding="0" align="center"><tbody><tr>
+  <td id="homelink"><a href="http://whiteboard.ping.se/">Whiteboard Web</a></td>
+  <td id="wikicmds">  </td>
+</tr></tbody></table>
+<!--/PageHeaderFmt-->
+<table id="blogmid" cellspacing="0" cellpadding="0" align="center"><tbody><tr>
+  <td id="blogbody" valign="top">
+<!--PageTitleFmt-->
+    <div id="location"><span class="pagegroup"><a href="http://whiteboard.ping.se/Android">Android</a> »</span>
+    <h1 class="pagetitle">unmkbootimg - reverse mkbootimg utility</h1></div>
+<!--/PageTitleFmt--><!--PageTitleAltFmt--><!--/PageTitleAltFmt-->
+<!--PageText-->
+<div id="wikitext">
+<div class="vspace"></div><h2>How to easy split the Android boot image</h2>
+<div><span class="rfloat"> <img src="./unmkbootimg - reverse mkbootimg utility_files/chop.png" alt="" title=""></span></div>
+<p class="vspace">I've put together a small utility undoing what mkbootimg does. Compared to similar
+utilities this also extracts the base addresses and command line parameters. It can also extract the kernel and root file system from a boot image embedded in a larger file, such as an update image.
+</p>
+<p class="vspace">Using this tool you can easily extract the ram root file system and kernel from the Android boot image.
+</p>
+<p class="vspace">Note that only parameters different from default are displayed, so if unmkbootimg does not display base address for example, you'll not have to specify it to mkbootimg neither.
+</p>
+<div class="vspace"></div><h3>About the mkbootimg build tool</h3>
+<p>For some phones, the boot image is built using non-standard offset(s). To rebuild your boot image again,
+you'll first have to recompile the build tool mkbootimg with the new offset(s). The unmkbootimg tool will tell you if this is needed and what offsets(s) to change.
+</p>
+<div class="vspace"></div><ul><li> <a target="_blank" class="urllink" href="https://gist.github.com/1087757">How to recompile mkbootimg</a>
+</li></ul><div class="vspace"></div><h3>Download</h3>
+<ul><li><a class="urllink" href="http://whiteboard.ping.se/uploads/Android/unmkbootimg.gz">unmkbootimg</a> version 1.2, gziped binary for GNU/Linux.
+</li></ul><div class="vspace"></div><h3>Feedback</h3>
+<ul><li> <a target="_blank" class="urllink" href="http://forum.xda-developers.com/showthread.php?t=1877807">XDA forum thread</a>
+</li></ul><div class="vspace"></div><h3>Usage</h3>
+<div class="frame"> 
+<pre class="escaped">$ unmkbootimg boot.img 
+Kernel size 2419636
+Kernel address 0x20008000
+Ramdisk size 152656
+Ramdisk address 0x21000000
+Secondary size 0
+Secondary address 0x20f00000
+Kernel tags address 0x20000100
+Flash page size 2048
+Board name is ""
+Command line "no_console_suspend=1"
+Extracting kernel to file zImage ...
+Extracting root filesystem to file initramfs.cpio.gz ...
+All done.
+---------------
+To recompile this image, use:
+  mkbootimg --kernel zImage --ramdisk initramfs.cpio.gz --base 0x20000000
+            --cmdline 'no_console_suspend=1' -o new_boot.img
+---------------
+$ ls -l
+totalt 5044
+-rw-r--r-- 1 kuisma kuisma 2576384  9 sep 09.44 boot.img
+-rw-r--r-- 1 kuisma kuisma  152656  9 sep 09.44 initramfs.cpio.gz
+-rw-r--r-- 1 kuisma kuisma 2419636  9 sep 09.44 zImage
+</pre>
+</div>
+<p class="vspace">/By <a class="urllink" href="mailto:kuisma@ping.se">Mikael Q Kuisma</a>
+</p>
+<div class="vspace"></div>
+</div>
+  </td>
+<!--PageRightFmt-->
+  <td id="blogright" valign="top">
+   <form action="http://whiteboard.ping.se/">
+    <input type="hidden" name="n" value="Android.Unmkbootimg">
+    <input type="hidden" name="action" value="search">
+    <input type="text" name="q" value=" Search " class="inputbox searchbox" onfocus="if(this.value=&#39; Search &#39;) {this.value=&#39;&#39;}" onblur="if(this.value==&#39;&#39;) {this.value=&#39; Search &#39;}"><input type="submit" class="inputbutton searchbutton" value="Go"></form>
+<p class="sidehead"> <a class="wikilink" href="http://whiteboard.ping.se/Main/HomePage">Home</a>
+</p><ul><li><a class="wikilink" href="http://whiteboard.ping.se/Linux/Linux">GNU/Linux</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/Android/Android">Android</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/HackValue/HackValue">HackValue</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/Networking/Networking">Networking</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/Security/Security">Security</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/Propeller/Propeller">Propeller</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/MachineLearning/MachineLearning">Machine learning</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/SDR/SDR">SDR Radio</a>
+</li><li><a class="urllink" href="http://whisper.ping.se/">Whisper</a>
+</li><li><a class="wikilink" href="http://whiteboard.ping.se/InSwedish/InSwedish">InSwedish</a>
+</li></ul><p class="vspace sidehead"> <a class="urllink" href="http://www.ping.se/">Ping site</a>
+</p><ul><li><a class="urllink" href="http://www.ping.se/ASDIC/Overview">ASDIC</a>
+</li></ul><p class="vspace"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</p>
+<div class="vspace"></div>
+
+  </td>
+<!--/PageRightFmt-->
+</tr></tbody></table>
+<!--PageFooterFmt-->
+<table id="blogfoot" cellspacing="0" cellpadding="0" align="center"><tbody><tr>
+  <td class="lastmod">Page last modified 2013-10-14 20:16Z</td>
+  <td class="footnav"><div style="text-align: right;"> 
+<p><a rel="nofollow" class="wikilink" href="http://whiteboard.ping.se/Android/Unmkbootimg#">^</a>
+</p></div>
+  </td>
+</tr></tbody></table>
+<!--/PageFooterFmt-->
+<!-- Start of StatCounter Code -->
+<script type="text/javascript">
+var sc_project=4180083; 
+var sc_invisible=1; 
+var sc_partition=48; 
+var sc_click_stat=1; 
+var sc_security="42cbc20c"; 
+</script>
+
+<script type="text/javascript" src="./unmkbootimg - reverse mkbootimg utility_files/counter.js"></script><noscript>&lt;div class="statcounter"&gt;&lt;a title="hit counter" href="http://www.statcounter.com/" target="_blank"&gt;&lt;img class="statcounter" src="http://c.statcounter.com/4180083/0/42cbc20c/1/" alt="hit counter" &gt;&lt;/a&gt;&lt;/div&gt;</noscript>
+<!-- End of StatCounter Code -->
+
+
+</body></html>

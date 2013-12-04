@@ -1,0 +1,4 @@
+/*
+This stylesheet can overrride selectors injected into the HTML header.
+*/
+.diffbox { width:100%; }
