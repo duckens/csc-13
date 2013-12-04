@@ -1,0 +1,32 @@
+what did I do:
+
+
+1) get Android-Kitchen
+
+2) get system image. I got GT-I9100_SER_I9100XWLP2_I9100OXELP4_I9100XXLPQ.zip
+from http://goangeek.wordpress.com/2012/04/03/official-ics-links-for-sgs2/
+
+3) extract it and mv file.tar.md5 to file.tar
+
+4) copy the result to Android-Kitchen-homefolder/original_update/
+
+5) run Android-kitchen-homefolder/menu
+actions inside are intuitive:
+first ask to take the original image => Android-kitchen must accept it
+then modify what you want to modify
+and then write the result
+
+you will find it in:
+Android-kitchen-homefolder/OUTPUT_ZIP
+
+there will be a .zip file. Copy it to smartphone's sd-card (in case of Samsung Galaxy S2 to the internal one)
+
+6) install from App Market Clockwork rom manager
+
+7) reboot into recovery
+
+8) backup your current system
+
+9) reboot and copy it to pc
+
+10) reboot again and flash your new system

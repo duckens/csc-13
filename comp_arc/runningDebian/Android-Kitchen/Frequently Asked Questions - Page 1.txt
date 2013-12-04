@@ -1,0 +1,151 @@
+Frequently Asked Questions - Page 1
+
+PLEASE DO NOT DUPLICATE THIS POST UNDER YOUR OWN THREAD
+
+
+Please note that your ROM will not flash correctly on your device if the device is not supported by the kitchen! Please see post #1 of this thread for the current list of supported devices. If you do not see yours listed, then follow the instructions in the section below, entitled "How to add new devices".
+
+
+What operating systems are supported, and how do I set them up for the kitchen?
+
+Choose one of the installation methods based on your computer's current operating system:
+
+Quote:
+
+1) Windows (2000, XP, Vista, 7, 8)
+   
+Quote:
+
+2) Linux (Ubuntu recommended)
+   
+Download the Ubuntu Linux CD ISO image. The latest version is here at this link. You can either install it inside a virtual machine in Windows, or by itself on a separate partition on your PC. Other Linux distributions may work (e.g. Fedora, Mint), but have not been fully tested.
+If you're using a virtual machine like VirtualBox to install Ubuntu, then create a New virtual machine; go to Settings, and in the Storage menu choose the Ubuntu .ISO file as the CD/DVD device. When you Start the virtual computer, it will boot from this "virtual" CD. Then you can install Ubuntu. I would recommend a virtual hard disk size of around 25GB and that you allocate about 1.5GB of your PC's RAM to Ubuntu.
+If you instead want to install Linux on a brand new partition on your PC, I won't provide the details about installation -- you should be able to figure this out, or use Google. But I wouldn't recommend this method if you're new to Linux; it may not be safe and you run the risk of messing up your other partitions if you don't know what you're doing.
+After Ubuntu is finished installing, you need to install the Sun Java JDK as well:
+Open up an 'xterm' window (shortcut: CTRL + ALT + T)
+If you're using a 64-bit version of Ubuntu, then type this in your xterm: sudo apt-get install ia32-libs
+Open up the shortcut for the Ubuntu Software Center (the 'Ubuntu market'), click on the search option in the top right (where the binoculars are) and type: java 
+
+(If you don't have the Software Center, install it with 'sudo apt-get install software-center')
+You should get a bunch of results, but you only need "OpenJDK Java Runtime", which should normally be the first result. Click on "Install"
+After installation has completed, verify Java has been installed by typing in an xterm: java -version
+NOTE: If you are unable to get these steps working (e.g. you have Ubuntu installed on a USB drive), then follow this old procedure.
+If you used Virtual Box on your PC to install Ubuntu, then the following steps will finish up your installation:
+Install the Guest Additions
+NOTE: If you followed the guide and 'cd /media/cdrom' does not exist, then type instead: cd /media/VBOX* )
+Next, if you want to copy ROMs and other files between Windows and your Linux Virtual Box, then do this:
+Create a folder on your PC that you want to be accessed from Linux. e.g. C:\temp
+From your Ubuntu session, click on Devices --> Shared Folders. Then click on the "+" sign to add a New Share.
+Type the Folder Path (e.g. C:\temp) and give it a Folder Name (e.g. pc_temp), and check the Make Permanent box. Click OK to close the dialogs.
+Open a terminal in Ubuntu and create a folder that will mirror the contents of your PC's shared folder. e.g. mkdir ~/shared
+Then mount the reference to the PC folder to your new Ubuntu folder, e.g. sudo mount -t vboxsf pc_temp ~/shared
+If successful, then whatever you copy to your PC's folder (e.g. C:\temp) will also be seen under the new folder (e.g. ~/shared) in Ubuntu.
+If you want this Ubuntu folder to be automatically created every time you reboot into Ubuntu:
+Type: sudo vi /etc/rc.local
+In the rc.local file you will need to insert a line before the 'exit' statement; this line will contain the 'mount' command as shown above. But this time replace the tilde (~) with /home/your_user_id, e.g. sudo mount -t vboxsf pc_temp /home/your_user_id/shared
+If you need help with vi or any other editor, google it. You need to use 'sudo' (as shown in first step) before you edit a system file like rc.local.
+OPTIONAL: If you want your Android device to show up as a USB device under Linux automatically, you need to create a USB Filter in the VirtualBox Settings. Follow the guide here.
+Quote:
+
+3) Mac OS X
+   
+
+After following the setup for the operating system, how do I use the kitchen?
+
+Summary:
+Download kitchen
+'cd' to folder containing kitchen
+Start kitchen with: ./menu
+Customize and build ROM
+
+Detailed instructions (for newbies):
+   
+Download the kitchen from the first post of this thread.
+Then, extract the kitchen's .zip file contents to your 'user' folder.
+In Cygwin, this folder would be located under the 'home' folder of your install directory, e.g. C:\cygwin\home\<your_windows_id>.
+In Linux / OS X this would be the folder where your terminal command prompt starts at, e.g. /home/<your_login_id>.
+Then, in this folder, create a folder called "kitchen" and put all the kitchen files and folders under there. 
+
+
+For example, if 'johnsmith' is your login or user ID:
+Code:
+c:\cygwin\home\johnsmith\kitchen\    Should contain:
+- menu
+- original_update\
+- tools\
+- scripts\
+(... etc.)
+NOTE!! If your user folder name contains spaces (e.g. C:\cygwin\home\John Smith\kitchen), then the kitchen will not function properly. Instead, copy it one level up, under C:\cygwin\home\kitchen instead.
+
+Easy so far, right?? Some people get the above steps wrong because they rush and then skip the instructions, and then get stuck in the next few steps. If you've followed the above instructions exactly how I've said so far, then you should be okay and can proceed with the rest. 
+
+I'm making the following as newb-friendly as possible, which is why it looks longer than it should:
+
+Now, when you've figure that out, open up a command prompt (If you installed Cygwin, then click on the Cygwin shortcut on your desktop to start it - Yes, I know it's obvious, but some people don't know this).
+Normally, by default, you will start at the 'user' directory (e.g. C:/cygwin/home/johnsmith)
+From the command prompt, go to the folder containing the kitchen:
+e.g. if your kitchen is under your user folder like c:\cygwin\home\johnsmith\kitchen, then you would type: cd kitchen.
+e.g. If your kitchen is instead one level higher like c:\cygwin\home\kitchen then you would need to type. Type: cd ../kitchen
+
+If you read the instructions then the above should go fine without any errors. However, if you didn't, then shame on you  Read the following (skip this section if you're already in the correct kitchen folder):
+e.g. If your kitchen is instead at an even lower level like c:\cygwin\home\johnsmith\blah\stuff\android then you would type: cd blah/stuff/android
+In Cygwin, if you copied it under c:\some_other_folder instead, then you'd need to do: cd /cygdrive/c/some_other_folder
+If you have no idea what folder you're in, type: pwd and then compare with the kitchen folder in your file explorer to confirm you're in the correct folder. Use the "cd" command to move to the correct folder, e.g. "cd <path_to_kitchen_folder>"
+If you are still lost, well, this is probably not for you then... go back to iPhone (just kidding)  I have already given you a crash course in Unix commands. Go back to the beginning and make sure you did everything right. Or just Google it.
+To confirm you are in the correct folder, type the following to see the kitchen files and folders: ls (that's a lower case L and an S). You should see the file called 'menu', the folder called 'original_update' and more.
+
+
+Once you've figured out the above (NO ERRORS), then proceed:
+
+
+When you are in the correct folder, start up the kitchen by typing: ./menu
+NOTE1: If you get a 'permission denied' error, then you must type chmod +x menu and run ./menu again.
+NOTE2: If you get an error message about the file not being found, then it means you are not in the directory containing the kitchen!
+NOTE3: If you get an error message about missing binaries like 'clear', read Part 2 of the FAQ for solutions.
+
+
+Good? If the kitchen starts up, then you're ready to make a custom ROM! Finally.
+
+
+Select Option 1 to set up your working folder (the folder where your ROM is going to be created). To find a base ROM to import into this kitchen, follow the instructions in the section below entitled "How do I import a ROM into the kitchen?"
+Modify whatever you'd like in the kitchen
+If you want the ROM to be able to run apps that require root permissions, select the "Root" option.
+You can remove unneeded apps (*.apk) from the /system/app folder of your working folder.
+If you want to add Market or non-stock apps (*.apk) to your ROM (which can be uninstalled or updated from your device later) then select the kitchen's menu option that adds "/data/app functionality". Afterwards you can copy these .apk files to the new /data/app folder of your working folder. If you put those extra apps under /system/app instead then you won't be able to update most of them through the Market.
+Optional: Read this post for some more information about the fundamentals of creating your ROM with this kitchen.
+When you are finished modifying your ROM, just choose Build ROM.
+Your completed ROM can now be copied your SD card, ready for flashing from the recovery menu!
+NOTE: It is always recommended to make a Nandroid backup from the recovery menu before flashing a new ROM!! The recovery menu allows you to recover from a non-bootable ROM.
+
+
+How to add new devices that are not listed in the Supported Devices in Page 1?
+   
+
+WARNING: If your device is not listed in post #1 of this thread, and it does NOT use a 'YAFFS'-based filesystem (e.g. usually only low-end devices use YAFFS), do not attempt to flash a ROM that you built with this kitchen. Instead, you must do the following if your device is NOT listed:
+Create a file under the kitchen's /tools/edify_defs folder, with the name being the same as the value of ro.product.device (found in your device's /system/build.prop file).
+If the stock ROM images for your device contain the recovery.img file, extract its files from the kitchen menu: Advanced --> Tools for boot image --> Extract from boot.img/recovery.img in any folder. Then, open up its ramdisk folder, and look for /system/etc/recovery.fstab or /etc/recovery.fstab or similar FSTAB file location. Open this file to find the mount points.
+See the template file in the edify_defs folder to see how to set the mount points inside the file you created. Look at the other files in that folder for examples on how to do it.
+
+NOTE: This method does not guarantee your device will work with your custom ROM, however. Some devices may require more steps than just the edify_defs file, but the procedure is outside the scope of this FAQ. Ask around in the XDA sub-forum for your device if you need further help.
+
+
+
+How do I import a ROM into the kitchen to use as my base?
+(The instructions below are for HTC devices in general. For other devices, please visit the appropriate thread.)
+   
+From a shipped ROM:
+First, find the shipped ROM for your device, usually from htc.com or from searching xda-developers (check the Wiki or sticky posts under your device's sub-forum).
+This link may help: Various devices
+Please don't ask me for links, as I don't know everything or own all devices. 
+The shipped ROM can be found in three different formats. Identify the type you have downloaded:
+If the shipped ROM is in a .ZIP format, then simply copy it to the kitchen's original_update folder.
+OR if the shipped ROM consists of system.img and boot.img files, then copy those two files to the kitchen's original_update folder. If the ROM also includes a lib.img (found in some newer HTC ROMs), then copy that as well!
+OR if the shipped ROM is in an .EXE format, then do the following:
+In Windows, run the shipped ROM's .EXE file till it gets to the first dialog. Stop there but don't close the window yet.
+Go to Start->Run and type: %TEMP%
+When the folder opens, search for Rom.zip (use the "magnifying glass" Search button)
+Copy Rom.zip to your kitchen's original_update folder
+OR from a cooked/custom ROM:
+Copy the update.zip (or equivalent ZIP file) to your kitchen's original_update folder
+OR from a Nandroid backup (under /sdcard/nandroid) [NOT RECOMMENDED FOR NON-STOCK ROM BACKUPS]:
+Copy the system.img and boot.img files from the backup folder to your kitchen's original_update folder

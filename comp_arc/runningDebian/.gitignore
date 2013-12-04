@@ -1,0 +1,6 @@
+*.zip
+*.gz
+*.tar
+*.tar.gz
+*.tar.md5
+*content*
