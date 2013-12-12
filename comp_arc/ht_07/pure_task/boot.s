@@ -51,14 +51,14 @@ _start:
 	movb $0x0e, %ah       #bios service code to print one char
 	int  $0x10            #interrupt
 
-	movb $'\n' , %al       #character to print
+	movb $'\n' , %al      #character to print
 	movb $0x0e, %ah       #bios service code to print one char
 	int  $0x10            #interrupt
 
-	movb $0x00, %ah
+	movb $0x00, %ah       #wait for key
 	int  $0x16
 
-	int  $0x19
+	int  $0x19            #reboot?
 
 
 

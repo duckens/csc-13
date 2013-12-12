@@ -13,6 +13,10 @@ all:
 	cp $(BID_DIR)/test2.elf $(BID_DIR)/test2.bin
 	objcopy --output-target binary $(BID_DIR)/test2.bin
 
+	gcc test5.c -o $(BID_DIR)/test5.elf
+	cp $(BID_DIR)/test5.elf $(BID_DIR)/test5.bin
+	objcopy --output-target binary $(BID_DIR)/test5.bin
+
 clean:
 	rm -rfv $(BID_DIR)
 	rm -rfv $(OBJ_DIR)
