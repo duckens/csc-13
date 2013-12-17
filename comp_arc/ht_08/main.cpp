@@ -421,7 +421,7 @@ int main(int argc, char** argv){
 				sendto(s, buf_send, bytes_to_send, 0, (struct sockaddr*)&address, sizeof(address));
 				
 				struct sockaddr_in from;
-				socklen_t fromlen;
+				socklen_t fromlen = sizeof(from);
 				
 				int bytes_read = recvfrom(s, buf_recv, BUFFER_SIZE_UDP, 0, (struct sockaddr*)&from, &fromlen);
 				
@@ -453,7 +453,7 @@ int main(int argc, char** argv){
 
 
 		struct sockaddr_in from;
-		socklen_t fromlen;
+		socklen_t fromlen = sizeof(from);
 
 
     	
