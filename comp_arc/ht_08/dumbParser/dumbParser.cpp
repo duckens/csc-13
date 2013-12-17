@@ -1,6 +1,12 @@
 #include <dumbParser.h>
 #include <iostream>
-	
+
+
+// #define DEBUG
+
+
+
+
 
 dumbParser::dumbParser(dumbParser const &other){
 
@@ -55,7 +61,10 @@ void dumbParser::parseArgs(int argc, char** argv){
 }
 
 void dumbParser::treatArgument(std::string arg, std::string arg_value){
-	// std::cout << "treatArgument " << arg << ", " << arg_value << std::endl;
+	#ifdef DEBUG
+	std::cout << "[Debug:] treatArgument " << arg << ", " << arg_value << std::endl;
+	#endif
+
 	if(arg == "-tcp"){
 		tcp = true;
 	} else if(arg == "-udp"){
@@ -77,7 +86,7 @@ void dumbParser::treatArgument(std::string arg, std::string arg_value){
 		result_isset = true;
 		result = arg_value;
 	} else {
-		std::cout << "unexpected argument " << arg << std::endl;
+		std::cout << "[Error:] unexpected argument " << arg << std::endl;
 	}
 }
 

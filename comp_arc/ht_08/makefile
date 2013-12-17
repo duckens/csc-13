@@ -5,5 +5,5 @@ SPECIAL_FLAGS		:= -std=c++11
 
 
 all:
-	$(CXX) main.cpp $(AGRPARSE_DIR)/dumbParser.cpp -o socket $(INCLUDE_FLAGS) $(SPECIAL_FLAGS) -g3
+	$(CXX) main.cpp $(AGRPARSE_DIR)/dumbParser.cpp -o sockets $(INCLUDE_FLAGS) $(SPECIAL_FLAGS) -g3
 
