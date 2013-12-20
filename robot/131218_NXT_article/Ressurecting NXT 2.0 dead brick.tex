@@ -1,0 +1,345 @@
+\documentclass[11pt]{article}
+% \usepackage[utf8]{inputenc}
+%\usepackage[T2A]{fontenc}
+%\usepackage[russian]{babel}
+\usepackage[warn]{mathtext}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{array,etoolbox}
+\preto\longtable{\setcounter{magicrownumbers}{0}}
+\newcounter{magicrownumbers}
+\newcommand\rownumber{\stepcounter{magicrownumbers}\arabic{magicrownumbers}}
+% Default margins are too wide all the way around. I reset them here
+\setlength{\topmargin}{-.5in}
+\setlength{\textheight}{9in}
+\setlength{\oddsidemargin}{.125in}
+\setlength{\textwidth}{6.25in}
+\setlength{\parindent}{0cm}
+\usepackage{graphicx}
+\DeclareGraphicsRule{.bmp}{bmp}{}{} % must be
+\setcounter{tocdepth}{4}
+\lstset{
+	language=C,
+	extendedchars=\true,
+	%inputencoding=utf8x,
+	inputencoding=utf8,
+	commentstyle=\it,
+	stringstyle=\bf,
+	belowcaptionskip=5pt,
+	frame=single
+}
+
+
+\renewcommand\lstlistingname{Listing}
+
+\begin{document}
+	
+	\title{Ressurecting NXT 2.0 dead brick.}
+	\author{Andrey Borozdin}
+	%\renewcommand{\today}{}
+	\date{\today}
+	\maketitle
+
+
+
+	
+	\begin{abstract}
+		This article is devoted to solving the problem of a dead (locked/clicking) NXT 2.0 brick. There are known ways to solve this problem using USB port of the brick, but sometimes it is impossible because brick can't be seen by computer. Here we discuss this particular case. We use JTAG port of the brick, flyswatter clone JTAG dongle and openOCD software to fix the problem. 
+	\end{abstract}
+
+
+	\tableofcontents
+
+	\section{Problem}
+	NXT Intelligent Brick is a brick-shaped computer made by Lego for purpose of creating and programming robots. It's widely used in schools to teach kids robotics and programming. Switching of or plugging off the cable while flashing firmware is rather common situation there. When such thing happends, the brick might become locked, i.e. stop responding to any commands. There are ways, widely discussed in the internet, how to fix the problem using USB. But sometimes the bricks locks in some special way, so that it becomes impossible to fix the problem using only USB. We are solving this particular problem.\\
+
+	It's well known that nowadays almost all ICs have JTAG port for debuggind. So the ICs inside NXT brick do. So, we will use JTAG port for low-level programming of the NXT brick.
+
+	\section{What is inside NXT brick}
+	Inside NXT brick you will find one board with everything on it except for the LCD.\\
+	There are two main controllers onboard: Atmel AT91SAM7S256 (LQFP64 package) and Atmel ATMEGA48 (TQFP44 package).\\
+	The first one is the heart of the NXT brick. It gathers all information from the sensors, motor encoders, it is connected to the USB and to the speaker.\\
+	ATMEGA48 generally controlls power. And also it checkes if there is AT91SAM7S256 controller on board. And if there is not (or dead) it switches off everything after 5 minutes.\\
+	Both controllers have debug ports, there are places for the debug connectors but there are no connectors. So, to fix the problem one will need to solder either wires or connector.
+
+	\section{Tools I used}
+
+		The tools I used to fix the problem are very numerous and you won't need them all, so I devided them into 2 lists.\\
+
+		\textbf{Tools that I used}
+		\begin{itemize}
+			\item Some small common instruments: screwdrivers, tweezers and so on.
+			\item Oscilloscope. I used Owon SDS7102.
+			\item Soldering station with hot air. I used Luckey 868.
+			\item JTAG dongle. I used flyswatter clone made from Pinboard rev.II. \url{http://shop.easyelectronics.ru/index.php?productID=152}\cite{easyelectronics_shop_pinboard}
+			\item Connector to solder onto the NXT brick mainboard.
+			\item Self-mage adaptor to connect NXT brick mainboard to JTAG dongle.
+			\item Some wires.
+			\item Computer with OS Linux. I used my Lenovo T420 with Linux Mint 14 32-bit.
+			\item OpenOCD open software. I used version 0.7 from official site.
+			\item Lego firmware for NXT 2.0. File.rfw. Don't worry it is just binary format, so don't care about .rfw.
+		\end{itemize}
+		
+		\textbf{Minimal tools set}
+		\begin{itemize}
+			\item Some small common instruments: screwdrivers, tweezers and so on.
+			\item JTAG dongle. Any supported by OpenOCD.
+			\item Some wires.
+			\item Solder.
+			\item Computer with OS Linux.
+			\item OpenOCD open software.
+			\item Lego firmware for NXT 2.0.
+		\end{itemize}
+		Anyway you'll need the solder to connect to the mainboard.\\
+		I my case, I needed to replace the AT91SAM7S256 controller, in this case you'll need some skills.
+
+	\section{My ideas for tools choise}
+		The main idea was \"try to use what you already have\".\\
+
+		Each vendor makes his own tools for flasing devices. So you can just order them and forget about trying to connect together things that were not made for that. But!
+		\begin{itemize}
+			\item The tools from Atmel are relatively pricey.
+			\item I want to be able to flash any controller using my tools in future, not only Atmel, maybe STM32 or something else.
+		\end{itemize}
+		So I had Pinboard rev.II with STM32F103C8 ARM Cortex-M3 module from
+		\url{http://easyelectronics.ru/}\cite{easyelectronics}
+		which includes CooCox CoLink clone
+		(\url{http://www.coocox.org/Colink.htm}\cite{coocox_colink})
+		JTAG dongle onboard for needs of flashing STM32F103C8.\\
+
+		(Board with that module: \url{http://shop.easyelectronics.ru/index.php?productID=152}\cite{easyelectronics_shop_pinboard})\\
+
+		Also I wanted to use Linux, so I was looking for universal free software for Linux. I found OpenOCD. But OpenOCD does not support CooCox CoLink. But thanks to this thread
+		\url{http://forum.easyelectronics.ru/viewtopic.php?f=23&t=8059}\cite{easyelectronics_important_thread}
+		 I found that CoLink is almost a clone of TinCanTools Flyswatter dongle. Both CoLink and Flyswatter are free to make, you can find their schematics on official websites.\\
+		
+		So I decided to use my CoLink clone, but to make OpenOCD think that I'm useng flyswatter.\\
+		By the way, there is very nice free soft from CooCox for compiling and flashing comtrollers (for Windows only), but unfourtunately it doesn't support AT91SAM7S256 the main NXT controller.\\
+
+	\section{Tools: software}
+
+		So the main tool we are going to use is OpenOCD. In my Linux Mint 14 I even can install it just using
+		\begin{lstlisting}[language=bash]
+sudo apt-get install openocd
+		\end{lstlisting}
+		But it installs version 0.5 and it doesn't support some commands. So let's download version 0.7 from here: \url{http://sourceforge.net/projects/openocd/files/openocd/0.7.0/}\cite{openocd_project_downloads}.\\
+		After you unzip it, you need to configure it with
+		\begin{lstlisting}[language=bash]
+./configure --enable-ft2232_libftdi --enable-ftdi
+		\end{lstlisting}
+		It might require some other packages like libusb and will tell you about that. If it does, just install them using apt-get.\\
+		You can find large user guide on OpenOCD here \url{http://openocd.sourceforge.net/doc/html/index.html}\cite{openocd_users_guide}\\
+		Also you will need a firware for NXT. You can dowload it just from official Lego site. As I said, don't worry aboit it's format it is just binary, so don't care about .rfw and rename to .bin.
+
+	\section{Tools: hardware}
+		So the first thing about hardware is the connection to the mainboard. I prefered to colder a connector to the mainboard at least on the first NXT brick for convinience.\\
+		The important fact is that you will need a rather rare (at least here in St.-Petersburg, Russia) type of connector. It's 2 times smaller than the common one and has 1.27 pitch. I found it here \url{http://chipster.ru/catalog/connectors/board-pin-connectors/} but with the following restrictions:\\
+		the male connectors are avaliable for surface mount only. I had to straighten out it's leads.\\
+		the female connectors are of large size, so I had to cut them and then to file them to look good.\\
+		I hope that it's the local problem of St.-Petersburg.\\
+		The next thing is making the CoLink look like Flyswatter. They are almost clones of each other, both of them use very-well known chip FT2232D from FTDI (\url{http://www.ftdichip.com/Products/ICs/FT2232D.htm}\cite{ftdi_chip_2232}). The only difference is place of SRST signal. (TRST differs too, but AT91SAM7S256 doesn't have TRST pin, so don't care). Flyswatter uses ADBUS5 pin of FT2232D to set SRST signal and ACBUS1 pin to listen it back. CoLink uses ACBUS1 pin to set SRST signal and nothing to listen it back. So I had to change the scematics of my adaptor.\\
+		Luckily, the adaptor in my case of Pinboard rev.II is made of tho parts: pinboard itself contains FT2232D chip, and small daughter board contains 74HCT541DW buffer. So to change schematics I just plugged the daughter board to pinboard with wires.\\
+		And finally I needed small adaptor co connect connector on JTAG dongle (with 2.54 pitch) and connector on NXT. I could make special wire, but I decided to make small adapter board which has 1.27 female connector on one side and 2.54 male connectors on the other.\\
+		If you would like to use FT2232 dongle, but don't have one I would advice you to look at this one: \url{http://easyelectronics.ru/universalnaya-plata-ft2232.html}. It's relatively cheap and contains only FT2232 soldered, so it's up to you to turn it into any dongle.
+
+	\section{Using OpenOCD (general commands)}
+		After you install openocd and connect everything, you can run debugging by
+		\begin{lstlisting}[language=bash]
+sudo openocd -f ./your_config_file.cfg
+		\end{lstlisting}
+		So -f key tells OpenOCD to take the config file, so you'll need one.\\
+		I use two of them: one to tell OpenOCD what dongle I'm using, the other to specify the target (i.e. my chip), so I run:
+		\begin{lstlisting}[language=bash]
+sudo openocd -f ./flyswatter.cfg -f ./at91_my.cfg
+		\end{lstlisting}
+		So, lets discuss them
+		\lstinputlisting[label={lst:flyswatter_cfg}, language=C, caption={flyswatter.cfg}, escapechar=, breaklines=true]{flyswatter.cfg}
+		Here everything is simple:\\
+		First I tell the OpenOCD programm to use the ft2232 interface. The ability to use interfaces depends on the --enable-... keys passed to the configure script.\\
+		Then I had to comment specification of device description, because I use CoLink instead of Flyswatter. I could write right string here but anyway vid and pid are enough.\\
+		The next string specifies board layout. There are ways to create your layout in OpenOCD scrits instead of using wires, but wires are simpler.\\
+		The last line specifies vid and pid of my FT2232 chip. FT2232 is shipped with these values.
+		\lstinputlisting[label={lst:at91_my_cfg}, language=C, caption={at91\_my.cfg}, escapechar=, breaklines=true]{at91_my.cfg}
+		This config is even simpler. It just relies on what is written in at91sam7sx.cfg file which comes with OpenOCD and in my case can be found in /usr/local/share/openocd/scripts/target/.\\
+		Then it specifies ports for telnet and gdb and the JTAG speed in Khz.\\
+		The last line is important. The higher speed the faster we can flash the controller but if it's too high we won't be able to flash anything. In case of NXT 500 Khz works.\\
+		So, after checking all the connections, run
+		\begin{lstlisting}[language=bash]
+sudo openocd -f ./your_config_file.cfg
+		\end{lstlisting}
+		You will get reply from OpenOCD like this:
+		\lstinputlisting[label={lst:openocd_started}, language=C, caption={Openocd started}, escapechar=, breaklines=true]{openocd_started.txt}
+		Note that there should not be any errors reported. If there are any, refer to the OpenOCD manual.\\
+		If everything is OK you can run telnet client. Open another terminal and type
+		\begin{lstlisting}[language=bash]
+telnet 127.0.0.1 4444
+		\end{lstlisting}
+		Where 127.0.0.1 is the localhost address and 4444 is the port specified in at91\_my.cfg.\\
+		You should get the reply:
+		\lstinputlisting[label={lst:openocd_telnet_started}, language=C, caption={Openocd debugger reply}, escapechar=, breaklines=true]{openocd_telnet_started.txt}
+		To flash the chip or make any other actions you should type commands here. Refer to OpenOCD user guide for full list of commands. We will deed some small amount but before we start we must put our chip into flashable state. To do that execute the following (I found it in at91sam7sx.cfg file that comes with OpenOCD):
+		\begin{lstlisting}[language=bash]
+soft_reset_halt
+mww 0xfffffd00 0xa5000004
+mww 0xfffffd44 0x00008000
+mww 0xfffffd08 0xa5000001
+mww 0xfffffc20 0x00000601
+sleep 10
+mww 0xfffffc2c 0x00481c0e
+sleep 10
+mww 0xfffffc30 0x00000007
+sleep 10
+mww 0xffffff60 0x00490100
+		\end{lstlisting}
+		You should not get any reply for that.\\
+		To get chip state (halted/running) type
+
+		\begin{lstlisting}[language=bash]
+poll
+		\end{lstlisting}
+
+		To get information about flash use
+
+		\begin{lstlisting}[language=bash]
+flash info 0
+		\end{lstlisting}
+
+		We ask information about flash bank number 0. The AT91SAM7S256 controller doesn't have any other banks by the way.\\
+		On this command you should get reply like this:
+		\lstinputlisting[label={lst:flash_info_0_reply}, language=C, caption={Flash info 0 debugger reply}, escapechar=, breaklines=true]{flash_info_0_reply.txt}
+		Note some important things here:
+
+		\begin{lstlisting}[language=C]
+#0 : at91sam7 at 0x00100000, size 0x00040000, buswidth 4, chipwidth 0
+		\end{lstlisting}
+		tells us that flash has size 0x40000 (which is 256Kb) and starts from address 0x00100000. We'll need this info for flashing/reading commands.\\
+		This message:
+		\begin{lstlisting}[language=C]
+Master clock ( estimated ) : 10428 KHz
+		\end{lstlisting}
+		means that clock generator inside the chip is working and the frequency is about 10Mhz.\\
+
+		Now we are ready to flash the controller.
+		
+	\section{Flashing AT91SAM7S256}
+		The controller can be flashed from telnet client after all the preparations with just two commands:
+		\begin{lstlisting}[language=bash]
+flash write_image erase unlock "new_firmware.bin" 0x00100000 bin
+dump_image "file_dump.bin" 0x00100000 0x40000
+		\end{lstlisting}
+		The first one writes file new\_firmware.bin into the flash. The second one dumps the whole flash to file file\_dump.bin.\\
+		Note that files fill be searced and created in the directory from which you started OpenOCD itself, not telnet!\\
+		To flash controller execute them and then check if file file\_dump.bin is equal to new\_firmware.bin. You can do this with diff command on Linux. And if they are equal - we win! Type
+		\begin{lstlisting}[language=bash]
+shutdown
+		\end{lstlisting}
+		and turn NXT brick on in usual way.
+	\section{Replacing AT91SAM7S256}
+		This section is about what to do if after flashing and dumping the dumped file is not qual to flashed one.\\
+		That was exactly my case! I tried hard but could not understand what kind of bug I have. The controller was flashed without errors, but when I dumped firmware, it contained certain differences from the file I tried to write.\\
+		So I decided to replace the controller. I bought a new one here \url{http://www.chipdip.ru/} for 340 RUR (7.5 EUR or 10.5 USD) and replaced it. If you are going to do the same, be sure you have enough skills. It's not so hard ro take away old chip using hot air (I use Luckey 868 340 degrees maximum float by the way), but it's not so easy to solder a new chip.\\
+		In my case, after replacement I performed all steps above and it finally worked.
+	\section{Strange bug encountered in my AT91SAM7S256}
+		While trying to flash the AT91SAM7S256 I encountered a very strange bug. After all preparations, I managed to run flash erite command and not get errors. But when I read it back I found that the first byte in memory, which address ended on 0xFB didn't write well. After this byte the whole flash contained a strange mess of bytes.\\
+		So I tried to erase the flash, but common erasing commands didn't work. So I tried the command
+		\begin{lstlisting}[language=bash]
+flash fillb address byte length
+		\end{lstlisting}
+		which fills memory from address to address + length with supplied byte.\\
+		In my case it looked like:
+		\begin{lstlisting}[language=bash]
+flash fillb 0x00100000 0xFF 0x100
+		\end{lstlisting}
+		I got reply that fillb failed on 0x001000fb. Then I tried 
+		\begin{lstlisting}[language=bash]
+flash fillb 0x00100100 0xFF 0x100
+		\end{lstlisting}
+		I got reply that fillb failed on 0x001001fb.\\
+		And so on. Bytes with address ending on 0xfb didn't write properly.\\
+		I still don't know what it was. After I changed controller all workes well.
+	\section{Conclusion}
+		I hope that these instructions will help you to ressurect dead NXT bricks. I also think that making JTAG connector on the brick and conneting to the mainboard by wires, so that kids could try their skills in JTAG debugging.\\
+		I found a lot of manuals, but could not use any of them to the letter. So I just put them into the bibliography.\\
+		Please send me any questions/feedback \href{mailto:borozduckens@gmail.com}{borozduckens@gmail.com} (to Andrey Borozdin).
+
+	\clearpage
+	\begin{thebibliography}{9}
+
+		\bibitem{lego_downloads}
+			\emph{Lego official downloads page}.
+			\url{http://www.lego.com/en-us/mindstorms/downloads/software/ddsoftwaredownload/}
+
+		\bibitem{iar_lego_source}
+			\emph{IAR page with NXT source code}.
+			\url{http://www.iar.com/mindstorms/}
+
+		\bibitem{tincantools_flyswatter_page}
+			\emph{TinCanTools Flyswatter page}.
+			\url{http://www.tincantools.com/JTAG/Flyswatter.html}
+
+		\bibitem{flyswatter_wiki}
+			\emph{Flyswatter wiki page}.
+			\url{http://www.elinux.org/Flyswatter}
+
+		\bibitem{coocox_colink}
+			\emph{CooCox Free/Open ARM Cortex MCU Development Tools}.
+			\url{http://www.coocox.org/Colink.htm}
+
+		\bibitem{nxtgcc}
+			\emph{NXTGCC project}.
+			\url{http://nxtgcc.sourceforge.net/nxtgcc.pdf}
+
+		\bibitem{easyelectronics_important_thread}
+			\emph{Easyelectronics forum thread on using OpenOCD}.
+			\url{http://forum.easyelectronics.ru/viewtopic.php?f=23&t=8059}
+
+		\bibitem{accessing_arm_openocd}
+			\emph{Accessing ARM-Controllers with OpenOCD}.
+			\url{http://siwawi.bauing.uni-kl.de/avr_projects/arm_projects/openocd_intro/}
+
+		\bibitem{openocd_project_downloads}
+			\emph{OpenOCD Project Downloads Page}.
+			\url{http://sourceforge.net/projects/openocd/files/openocd/0.7.0/}
+
+		\bibitem{openocd_users_guide}
+			\emph{OpenOCD User's Guide}.
+			\url{http://openocd.sourceforge.net/doc/html/index.html}
+
+		\bibitem{at91sam7s_openocd_article}
+			\emph{Configuring OpenOCD for the AT91SAM7SE}.
+			\url{http://www.ethernut.de/en/hardware/eir/openocd.html}
+
+		\bibitem{olimex_openocd_telnet}
+			\emph{Using OpenOCD with TELNET connection}.
+			\url{https://www.olimex.com/Products/ARM/JTAG/_resources/Manual_TELNET.pdf}
+
+		\bibitem{at91sam7s_mit_openocd_programmieren}
+			\emph{AT91SAM7S mit OpenOCD programmieren}.
+			\url{http://www.mikrocontroller.net/articles/AT91SAM7S_mit_OpenOCD_programmieren}
+
+		\bibitem{ada_user_guide_for_lego}
+			\emph{Ada User Guide for LEGO MINDSTORMS NXT}.
+			\url{http://www.dit.upm.es/~str/proyectos/mindstorms/2012/auj11.pdf}
+
+		\bibitem{atmel_at91sam7s_arm_microcontroller_framework}
+			\emph{Atmel AT91SAM7S ARM Microcontroller Framework}.
+			\url{http://tech.munts.com/MCU/Frameworks/ARM/at91sam7s/}
+
+		\bibitem{easyelectronics}
+			\emph{Easy electronics main page}.
+			\url{http://easyelectronics.ru/}
+			
+		\bibitem{easyelectronics_shop_pinboard}
+			\emph{Easy electronics shop: PinBoard II R2 STM32}.
+			\url{http://shop.easyelectronics.ru/index.php?productID=152}
+
+		\bibitem{ftdi_chip_2232}
+			\emph{FT2232D - Dual USB UART/FIFO IC}.
+			\url{http://www.ftdichip.com/Products/ICs/FT2232D.htm}
+
+
+	\end{thebibliography}
+
+\end{document}

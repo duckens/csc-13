@@ -1,0 +1,17 @@
+
+
+1) abstract
+2) tools required
+
+3) problem
+4) guidline for tools choise
+5) tools: software
+6) tools: hardware
+7) using software (general ideas)
+8) flashing at91sam7s256
+9) replacing at91sam7s256
+
+10) bug in at91sam7s256 found
+11) conclusion
+
+12) references

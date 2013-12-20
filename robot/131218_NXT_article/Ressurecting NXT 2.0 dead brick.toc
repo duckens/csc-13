@@ -1,0 +1,11 @@
+\contentsline {section}{\numberline {1}Problem}{1}{section.1}
+\contentsline {section}{\numberline {2}What is inside NXT brick}{2}{section.2}
+\contentsline {section}{\numberline {3}Tools I used}{2}{section.3}
+\contentsline {section}{\numberline {4}My ideas for tools choise}{3}{section.4}
+\contentsline {section}{\numberline {5}Tools: software}{3}{section.5}
+\contentsline {section}{\numberline {6}Tools: hardware}{4}{section.6}
+\contentsline {section}{\numberline {7}Using OpenOCD (general commands)}{4}{section.7}
+\contentsline {section}{\numberline {8}Flashing AT91SAM7S256}{7}{section.8}
+\contentsline {section}{\numberline {9}Replacing AT91SAM7S256}{7}{section.9}
+\contentsline {section}{\numberline {10}Strange bug encountered in my AT91SAM7S256}{8}{section.10}
+\contentsline {section}{\numberline {11}Conclusion}{8}{section.11}

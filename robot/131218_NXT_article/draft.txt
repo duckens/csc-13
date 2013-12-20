@@ -1,0 +1,128 @@
+Respawning dead NXT brick.
+
+This article is devoted to solving a problem of dead (clicking) NXT 2.0 brick. I asked Sergey Filippov the teacher of robot-engineering course in CSC to give me a dead brick. He gave me one and told me that with this particular item they tried to solve the problem in usual way and failed.
+
+So, I started with disassembling the brick.
+
+Hardware:
+
+Inside I found one board with two main chips: Atmel at91sam7s256 (LQFP64) and Atlem atmega48 (TQFP44).
+There are two unsoldered places for connectors (J?, J?) which turned out to be debug ports for theese two controllers.
+
+I had no doubt that problem is in at91sam7s256, so I bought and soldered connector to J?.
+
+JTAG male connector:
+
+Note: a rather rare type of connector required. It's half size compared to the most common used connectors PL?. And I could find connectors only for surface mount and of sizes larger than I needed, so I had to solve it first. I took male connector and simply выпрямил? it's contacts and it fitted wery well.
+
+JTAG dongle:
+
+I needed a JTAG dongle to communicate with controller. I didn't want to buy (too expensive and not universal) Atmel dongle, so I decided to use what I had. I had CoLink clone, embedded in the Pinboard rev.II board, which I bought here: (?).
+Unfortunately, CoLink software does not support at91sam7 controllers, so I had to use some other soft. The problem is that a rare programm supports CoLink dongle.
+But luckily I found this thread: () and realised that there exists flyswatter project with open scematichs which is almost a clone of CoLink. And it's supported by OpenOCD open software for Linux.
+All this means that I'm going to use my CoLink clone dongle, so I need wires to connect one to controller.
+
+JTAG female connector:
+
+Instead of making special wires, I decided to make переходник? from 10-pin standart connector to the connector on NXT board. So I created a small board with female connector (for NXT) and standart 10-pin male connector. Female connector I bought was of size greater than I needed, so I cut it with dremel.
+
+So I finished with hardware
+
+Software:
+
+Intsalling OpenOCD:
+
+There is OpenOCD project which supports flashind and debugging lots of controllers via lots of dongles. On my Linux Mint 14 I could install OpenOcd just via:
+
+sudo apt-get install openocd
+
+but it installed version 0.5 and it didn't support some commands. So, I downloaded OpenOCD source from here ()?.
+
+In my case I build it like this:
+
+./configure --enable-interface-ftdi ?
+
+make
+
+sudo make install
+
+
+Running OpenOCD:
+
+So, I now we need a config file for debugging
+
+After some try-n-fail I found that I need theese configs: ? ?
+
+You need to start openocd like this:
+
+openocd -f ./flyswatter.cfg -f ./at91sam7s256.cfg
+
+(the order of config files is important)
+
+Then in other terminal you can connect to debugger via telnet:
+
+telnet 127.0.0.1 4444
+
+You will receive message like this from debugger:
+?
+
+and now it waits for your command.
+
+Controlling debug process:
+
+To get full list of OpenOCD commands see manual: ?
+We'll need a rather small amount of them.
+
+To get controller state you can write
+
+poll
+
+you'll receive something like this:
+
+?
+
+to see tha flash state you need to halt the controller:
+
+halt
+flash info 0
+
+we asked about flash in the bank number 0.
+
+You'll get back something like this:
+
+Note that controller clock is 32 KHz whish is a very low frequency.
+
+
+Flashing at91sam7s256:
+
+I found this instructions here ?. To flash controller you must bring it to special state. To make it execute the following:
+
+?
+
+and now if you ask 
+
+flash info 0
+
+you'll get this.
+
+Note that the frequency is 10 Mhz now.
+
+To dump flash memory to file use:
+
+?
+
+To write flash memory to file use:
+
+?
+
+After you write, read the memory back in different file and then compare them
+
+diff orig_file.bin dumped_file.bin
+
+The NXT firmware is supplied in files .rfw. Don't care about the .rfw extension, it's just binary format.
+
+After flashing type
+
+shutdown
+
+and you can run flashed NXT.
